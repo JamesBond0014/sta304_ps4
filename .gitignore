@@ -1,43 +1,35 @@
 .DS_Store
-
 inputs/
-
 # History files
 .Rhistory
 .Rapp.history
-
 # Session Data files
 .RData
-
 # User-specific files
 .Ruserdata
-
 # Example code in package build process
 *-Ex.R
-
 # Output files from R CMD build
 /*.tar.gz
-
 # Output files from R CMD check
 /*.Rcheck/
-
 # RStudio files
 .Rproj.user/
-
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
-
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
-
 # knitr and R markdown default cache directories
 *_cache/
 /cache/
-
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
 # R Environment Variables
 .Renviron
+NS-Methodology-Representativeness-Assessment.pdf
+Nationscape-DataRelease_WeeklyMaterials_DTA_200910_161918
+Nationscape-DataRelease_WeeklyMaterials_SAV_200910_161719
+Nationscape-User-Guide_2020sep10.pdf
+variables_presence_by_wave_200908_200145.xlsx
