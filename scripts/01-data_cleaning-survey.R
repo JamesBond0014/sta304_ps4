@@ -17,29 +17,51 @@ library(tidyverse)
 raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
-# Just keep some variables
+# Recommended variables
+# reduced_data <-
+#   raw_data %>%
+#   select(interest,
+#          registration,
+#          vote_2016,
+#          vote_intention,
+#          vote_2020,
+#          ideo5,
+#          employment,
+#          foreign_born,
+#          census_region,
+#          hispanic,
+#          education,
+#          state,
+#          race_ethnicity,
+#          age,
+#          gender,
+#          household_income,
+#          congress_district
+#   )
+
+# chosen variables
 reduced_data <- 
   raw_data %>% 
-  select(interest,
-         registration,
-         vote_2016,
-         vote_intention,
+  select(vote_intention,
          vote_2020,
-         ideo5,
-         employment,
-         foreign_born,
-         gender,
-         census_region,
-         hispanic,
-         race_ethnicity,
-         household_income,
-         education,
          state,
-         congress_district,
-         age)
+         race_ethnicity,
+         age,
+         gender,
+         household_income
+  )
 
+reduced_data = reduced_data[complete.cases(reduced_data), ]
 
-#### What else???? ####
+# View factors for each variable of interest
+table(reduced_data$state)
+table(reduced_data$race_ethnicity)
+table(reduced_data$age)
+table(reduced_data$gender)
+table(reduced_data$household_income)
+
+table(reduced_data$vote_intention)
+table(reduced_data$vote_2020)
+
 # Maybe make some age-groups?
-# Maybe check the values?
 # Is vote a binary? If not, what are you going to do?
