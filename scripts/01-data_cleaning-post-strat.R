@@ -1,8 +1,8 @@
 #### Preamble ####
-# Purpose: Prepare and clean the survey data downloaded from [...UPDATE ME!!!!!]
-# Author: Rohan Alexander and Sam Caetano [CHANGE THIS TO YOUR NAME!!!!]
-# Data: 22 October 2020
-# Contact: rohan.alexander@utoronto.ca [PROBABLY CHANGE THIS ALSO!!!!]
+# Purpose: Prepare and clean the survey data downloaded from IPUMS
+# Author: Zakir Chaudry
+# Data: 25 October 2020
+# Contact: zakir.chaudry@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
 # - Need to have downloaded the ACS data and saved it to inputs/data
@@ -13,7 +13,7 @@
 library(haven)
 library(tidyverse)
 # Read in the raw data. 
-raw_data <- read_dta("inputs/data/usa_00003.dta"
+raw_data <- read_dta("inputs/data/usa_00001.dta"
                      )
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
@@ -36,11 +36,8 @@ reduced_data <-
          educd,
          labforce,
          inctot)
-rm(raw_data)
          
-
-#### What's next? ####
-
-
+head(reduced_data)
+reduced_data$hispan %>% table()
 
          
