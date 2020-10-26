@@ -67,7 +67,7 @@ Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
 Equation \@ref(eq:bayes) seems useful, eh?
 
 Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-
+@tausanovitch_vavreck_2019
 
 # Results
 
@@ -93,5 +93,5 @@ Weaknesses and next steps should also be included.
 
 
 # References
-
+Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from [URL].
 

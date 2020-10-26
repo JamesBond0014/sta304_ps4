@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Prepare and clean the survey data downloaded from IPUMS
 # Author: Zakir Chaudry
-# Data: 25 October 2020
+# Date: 25 October 2020
 # Contact: zakir.chaudry@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
