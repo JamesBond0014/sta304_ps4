@@ -11,17 +11,15 @@ library(tidyverse)
 library(nnet)
 ```
 
-```{r}
-raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
-# Add the labels
-raw_data <- labelled::to_factor(raw_data)
-```
+
 
 ```{r}
 raw_data <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
+```
 
+```{r}
 # Just keep some variables that may be of interest (change 
 # this depending on your interests)
 names(raw_data)
@@ -46,6 +44,11 @@ reduced_data$inctot %>% table()
 strat <- reduced_data
 ```
 
+```{r}
+raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
+# Add the labels
+raw_data <- labelled::to_factor(raw_data)
+```
 
 ```{r}
 reduced_data <- 
