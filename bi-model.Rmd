@@ -9,6 +9,8 @@ output: pdf_document
 library(haven)
 library(tidyverse)
 library(nnet)
+library(Metrics)
+
 ```
 
 
@@ -49,6 +51,10 @@ raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
 ```
+```{r}
+colnames(raw_data)
+```
+
 
 ```{r}
 reduced_data <- 
@@ -59,7 +65,8 @@ reduced_data <-
          race_ethnicity,
          age,
          gender,
-         household_income
+         household_income,
+         education
   )
 reduced_data <- reduced_data[complete.cases(reduced_data), ]
 
@@ -73,9 +80,33 @@ reduced_data$race_ethnicity[
   ] <- ('Asian (Other)')
 reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
 
-levels(reduced_data$race_ethnicity )
+total_rows <- nrow(reduced_data)
+
 
 ```
+```{r}
+shuffle_indices <- sample(total_rows)
+data <- reduced_data[shuffle_indices,]
+boundary <- as.integer(total_rows*0.9)
+
+training <- data[0:boundary,]
+model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender + 
+                          household_income + education, data = training)
+```
+
+
+```{r}
+testing <- data[boundary:total_rows,]
+
+probability <- predict(model, newdata = training, "probs")
+column_index <- max.col(probability, tie="random")
+
+testing_predictions <- colnames(probability)[column_index]
+testing_ground_truth <- training %>% pull(vote_2020)
+accuracy(testing_ground_truth, testing_predictions)
+
+```
+
 
 ```{r}
 table(reduced_data$state)

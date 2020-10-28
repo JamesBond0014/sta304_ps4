@@ -1,0 +1,134 @@
+---
+title: "ps4_models"
+author: "James Bao"
+date: "10/27/2020"
+output: pdf_document
+---
+
+```{r}
+library(haven)
+library(tidyverse)
+library(nnet)
+library(Metrics)
+
+```
+
+
+
+```{r}
+raw_data <- read_dta("inputs/data/usa_00001.dta")
+# Add the labels
+raw_data <- labelled::to_factor(raw_data)
+```
+
+```{r}
+# Just keep some variables that may be of interest (change 
+# this depending on your interests)
+names(raw_data)
+
+reduced_data <- 
+  raw_data %>% 
+  select(
+         stateicp,
+         sex,
+         race, 
+         educd,
+         inctot)
+         
+head(reduced_data)
+reduced_data$race %>% table()
+reduced_data$stateicp %>% table()
+reduced_data$educd %>% table()
+reduced_data$sex %>% table()
+reduced_data$inctot %>% table()
+
+
+strat <- reduced_data
+```
+
+```{r}
+raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
+# Add the labels
+raw_data <- labelled::to_factor(raw_data)
+```
+```{r}
+colnames(raw_data)
+```
+
+
+```{r}
+reduced_data <- 
+  raw_data %>% 
+  select(vote_intention,
+         vote_2020,
+         state,
+         race_ethnicity,
+         age,
+         gender,
+         household_income,
+         education
+  )
+reduced_data <- reduced_data[complete.cases(reduced_data), ]
+
+reduced_data$race_ethnicity <- as.character(reduced_data$race_ethnicity)
+reduced_data$race_ethnicity[
+    reduced_data$race_ethnicity == 'Asian (Asian Indian)' |
+    reduced_data$race_ethnicity == 'Asian (Korean)' |
+    reduced_data$race_ethnicity == 'Asian (Filipino)' |
+    reduced_data$race_ethnicity == 'Asian (Vietnamese)'|
+    grepl("Pacific", reduced_data$race_ethnicity)
+  ] <- ('Asian (Other)')
+reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
+
+total_rows <- nrow(reduced_data)
+
+
+```
+```{r}
+shuffle_indices <- sample(total_rows)
+data <- reduced_data[shuffle_indices,]
+boundary <- as.integer(total_rows*0.9)
+
+training <- data[0:boundary,]
+model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender + 
+                          household_income + education, data = training)
+```
+
+
+```{r}
+testing <- data[boundary:total_rows,]
+
+probability <- predict(model, newdata = training, "probs")
+column_index <- max.col(probability, tie="random")
+
+testing_predictions <- colnames(probability)[column_index]
+testing_ground_truth <- training %>% pull(vote_2020)
+accuracy(testing_ground_truth, testing_predictions)
+
+```
+
+
+```{r}
+table(reduced_data$state)
+table(reduced_data$race_ethnicity)
+table(reduced_data$age)
+table(reduced_data$gender)
+table(reduced_data$household_income)
+
+table(reduced_data$vote_intention)
+table(reduced_data$vote_2020)
+```
+```{r}
+model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender + 
+                          household_income, data = reduced_data)
+model2 <- nnet::multinom(vote_2020 ~ household_income, data = reduced_data)
+```
+```{r}
+summary(model)
+```
+
+
+```{r}
+pre
+```
+
