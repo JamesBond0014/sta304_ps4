@@ -10,6 +10,15 @@ library(haven)
 library(tidyverse)
 library(nnet)
 library(Metrics)
+library(brms)
+```
+```{r}
+remove.packages("rstan")
+
+```
+
+```{r}
+# install.packages("rstan", repos = "https://cloud.r-project.org/", dependencies = TRUE)
 
 ```
 
@@ -70,6 +79,10 @@ reduced_data <-
   )
 reduced_data <- reduced_data[complete.cases(reduced_data), ]
 
+reduced_data <- reduced_data[reduced_data$vote_2020 == "Donald Trump" |
+                             reduced_data$vote_2020 == "Joe Biden",]
+
+
 reduced_data$race_ethnicity <- as.character(reduced_data$race_ethnicity)
 reduced_data$race_ethnicity[
     reduced_data$race_ethnicity == 'Asian (Asian Indian)' |
@@ -82,7 +95,7 @@ reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
 
 total_rows <- nrow(reduced_data)
 
-
+reduced_data
 ```
 ```{r}
 shuffle_indices <- sample(total_rows)
@@ -90,8 +103,17 @@ data <- reduced_data[shuffle_indices,]
 boundary <- as.integer(total_rows*0.9)
 
 training <- data[0:boundary,]
-model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender + 
-                          household_income + education, data = training)
+model <- brms::brm(formula = vote_2020 ~ state + race_ethnicity + gender + 
+                          household_income + education, 
+                   data = training,
+                   family = bernoulli(link = "logit"),
+                   warmup = 500, 
+                   iter = 4000, 
+                   chains = 2, 
+                   inits= "0", 
+                   cores=2,
+                   seed = 123
+                   )
 ```
 
 
