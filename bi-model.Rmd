@@ -13,7 +13,7 @@ library(Metrics)
 library(brms)
 ```
 ```{r}
-remove.packages("rstan")
+# remove.packages("rstan")
 
 ```
 
@@ -21,8 +21,6 @@ remove.packages("rstan")
 # install.packages("rstan", repos = "https://cloud.r-project.org/", dependencies = TRUE)
 
 ```
-
-
 
 
 ```{r}
@@ -47,6 +45,9 @@ reduced_data <-
          household_income,
          education
   )
+
+
+
 reduced_data <- reduced_data[complete.cases(reduced_data), ]
 
 reduced_data <- reduced_data[reduced_data$vote_2020 == "Donald Trump" |
@@ -63,7 +64,11 @@ reduced_data$race_ethnicity[
   ] <- ('Asian (Other)')
 reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
 
+reduced_data <- droplevels(reduced_data)
+
+
 total_rows <- nrow(reduced_data)
+table(reduced_data$vote_2020)
 
 reduced_data
 ```
@@ -73,16 +78,11 @@ data <- reduced_data[shuffle_indices,]
 boundary <- as.integer(total_rows*0.9)
 
 training <- data[0:boundary,]
-model <- brms::brm(formula = vote_2020 ~ state + race_ethnicity + gender + 
-                          household_income + education, 
-                   data = training,
-                   family = bernoulli(link = "logit"),
-                   warmup = 500, 
-                   iter = 4000, 
-                   chains = 2, 
-                   inits= "0", 
-                   cores=2,
-                   seed = 123
+model <- brm(formula = vote_2020 ~ (1|state) + (1|race_ethnicity) + (1|gender) + 
+                          (1|household_income) + (1|education), 
+             data = training,
+             family = bernoulli(),
+              
                    )
 ```
 
