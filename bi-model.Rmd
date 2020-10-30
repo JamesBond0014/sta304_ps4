@@ -102,7 +102,7 @@ training <- data[0:boundary,]
 
 ```{r}
 
-model <- brm(formula = vote_2020 ~ state + race_ethnicity + gender + age_group, 
+model <- brm(formula = vote_2020 ~ state + race_ethnicity + gender + age_group,
              data = training,
              family = bernoulli(),
              control = list(adapt_delta = .99, 
@@ -150,47 +150,9 @@ table(testing$acc)
 
 
 ```{r}
-table(reduced_data$state)
-table(reduced_data$race_ethnicity)
-table(reduced_data$age)
-table(reduced_data$gender)
-table(reduced_data$household_income)
-
-table(reduced_data$vote_intention)
-table(reduced_data$vote_2020)
-```
-```{r}
-#run this for faster but similar results
-model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender +age_group,
-                        data = reduced_data)
-```
-```{r}
-testing <- data[boundary:total_rows,]
-testing$vote_num <- if_else(testing$vote_2020 == "Donald Trump", 0, 1 )
-# probability <- model %>% add_predicted_draws(newdata = testing)
-
-# training <- data[0:boundary,]
-# training$vote_num <- if_else(training$vote_2020 == "Donald Trump", 0, 1 )
-
-probability <- predict(model, type = "probs", newdata = testing)
-probability <- if_else(probability>0.5,1,0)
-
-testing$probs <- probability
-
-testing <- testing %>% mutate(acc = probs==vote_num)
-
-table(testing$acc)
-```
-
-
-```{r}
 post_strat <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
 post_strat <- labelled::to_factor(post_strat)
-```
-
-```{r}
-levels(post_strat$age)
 ```
 
 
@@ -218,6 +180,9 @@ cleaned_post$age <- as.factor(cleaned_post$age)
 
 
 cleaned_post$age <- as.numeric(cleaned_post$age)
+
+cleaned_post <- cleaned_post[cleaned_post$age >= 18,]
+
 
 cleaned_post$age_group <- cut(cleaned_post$age, breaks = c(18, 29, 44, 60, 200),
                               labels = c("18-29","30-44","45-60","60+" ),
@@ -268,7 +233,7 @@ cleaned_post$state <- plyr::mapvalues(
 
 cleaned_post$state <- as.factor(cleaned_post$state)
 
-
+cleaned_post = cleaned_post[complete.cases(cleaned_post), ]
 
 cleaned_post <- droplevels(cleaned_post)
 
@@ -287,7 +252,19 @@ cleaned_post <- cleaned_post %>% select(race_ethnicity, gender, education,
 
 
 ```{r}
-cleaned_post$probability <- predict(model, type = "probs", newdata = cleaned_post)
-cleaned_post$probability
+pred_post <- cleaned_post
+
+pred_post <- pred_post[sample(nrow(pred_post)),]
+pred_post <- pred_post[0:50000,]
+
+probability <- predict(model, type = "response", newdata = pred_post)[,1]
+
+
 ```
+
+```{r}
+table(if_else(probability>=0.5,"Joe Biden",
+                                  "Donald Trump" ))
+```
+
 
