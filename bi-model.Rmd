@@ -269,8 +269,9 @@ probability <- predict(model, type = "response", newdata = pred_post)[,1]
 table(if_else(probability<=0.5,"Joe Biden",
                                   "Donald Trump" ))
 
-pred_post$pred<-if_else(probability<=0.5,"Joe Biden",
-                                  "Donald Trump" )
+pred_post$pred<-if_else(probability<=0.5,"Joe Biden", "Donald Trump" )
+
+save(pred_post, file = "model/predictions.Rda")
 
 summary(model)
 ```
