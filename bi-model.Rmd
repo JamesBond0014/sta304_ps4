@@ -252,6 +252,7 @@ cleaned_post <- cleaned_post %>% select(race_ethnicity, gender, education,
 
 
 ```{r}
+set.seed(101)
 pred_post <- cleaned_post
 
 pred_post <- pred_post[sample(nrow(pred_post)),]
