@@ -6,6 +6,8 @@ output: pdf_document
 ---
 
 ```{r}
+library(plyr)
+library(dplyr)
 library(haven)
 library(tidyverse)
 library(nnet)
@@ -14,25 +16,14 @@ library(brms)
 library(tidybayes)
 library(statebins)
 ```
-```{r}
-post_strat <- read_dta("inputs/data/usa_00001.dta")
-# Add the labels
-post_strat <- labelled::to_factor(post_strat)
-```
 
-```{r}
-factor(post_strat$age)
 
-```
 
 
 ```{r}
 raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
-```
-```{r}
-raw_data$education
 ```
 
 
@@ -44,28 +35,38 @@ reduced_data <-
          race_ethnicity,
          age,
          gender,
-         education
-  )
+         education)
 
 
-
-# reduced_data <- reduced_data[complete.cases(reduced_data$vote_2020), ]
-
+#filtering out for only Trump and Biden voters
 reduced_data <- reduced_data[reduced_data$vote_2020 == "Donald Trump" |
                              reduced_data$vote_2020 == "Joe Biden",]
 
-# reduced_data$age <- reduced_data[reduced_data$age <= 29,] <- "18-29"
-# reduced_data$age <- reduced_data[reduced_data$age > 29 &
-#                                          reduced_data$age <= 44,] <- "30-44"
-# reduced_data$age <- reduced_data[reduced_data$age > 44 &
-#                                          reduced_data$age <= 60, ] <- "45-60"
-# reduced_data$age <- reduced_data[reduced_data$age > 60,] <- "60+"
-
-
-reduced_data$age_group <- cut(reduced_data$age, breaks = c(18, 29, 44, 60, 200),
+# breaking age into groups of 18-29, 30-44, 45-60 and 60+
+reduced_data$age_group <- cut(reduced_data$age, 
+                              breaks = c(18, 29, 44, 60, 200),
                               labels = c("18-29","30-44","45-60","60+" ), 
                               right=FALSE)
 
+#combine education options, helps match with post stratification data
+reduced_data$education <- as.character(reduced_data$education)
+reduced_data$education[
+    grepl("Completed some graduate, but no degree", reduced_data$education)|
+      grepl("Masters degree", reduced_data$education)|
+      grepl("Doctorate degree", reduced_data$education)
+  ] <- ('Graduate Education')
+reduced_data$education[
+    grepl("Associate Degree", reduced_data$education)|
+      grepl("college", tolower(reduced_data$education))
+  ] <- ('Post Secondary Degree')
+reduced_data$education[
+    grepl("Grade", reduced_data$education)|
+      grepl("high school", tolower(reduced_data$education))
+  ] <- ('High School or less')
+reduced_data$education <- as.factor(reduced_data$education)
+
+
+#combine race options, helps match with post stratification data
 reduced_data$race_ethnicity <- as.character(reduced_data$race_ethnicity)
 reduced_data$race_ethnicity[
     reduced_data$race_ethnicity == 'Asian (Asian Indian)' |
@@ -76,13 +77,18 @@ reduced_data$race_ethnicity[
   ] <- ('Asian (Other)')
 reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
 
+#drop unused levels
 reduced_data <- droplevels(reduced_data)
 
 
 total_rows <- nrow(reduced_data)
 table(reduced_data$vote_2020)
 table(reduced_data$age_group)
-reduced_data
+levels(reduced_data$education)
+levels(reduced_data$gender)
+levels(reduced_data$race_ethnicity)
+reduced_data <- reduced_data %>% select(vote_2020, age_group, education, gender, 
+                                        race_ethnicity, state)
 ```
 ```{r}
 set.seed(50)
@@ -96,8 +102,7 @@ training <- data[0:boundary,]
 
 ```{r}
 
-model <- brm(formula = vote_2020 ~ state + race_ethnicity + gender + education +
-               age_group, 
+model <- brm(formula = vote_2020 ~ state + race_ethnicity + gender + age_group, 
              data = training,
              family = bernoulli(),
              control = list(adapt_delta = .99, 
@@ -109,9 +114,9 @@ model <- brm(formula = vote_2020 ~ state + race_ethnicity + gender + education +
 ```
 
 ```{r}
-saveRDS(model, file = "model/3chain2kiter.rds")
+saveRDS(model, file = "model/3chain_2k-iter_no-edu_final.rds")
 
-# readRDS("model/3chain2kiter.rds)
+# model <- readRDS("model/3chain_2k-iter_no-edu.rds")
 ```
 
 ```{r}
@@ -155,16 +160,134 @@ table(reduced_data$vote_intention)
 table(reduced_data$vote_2020)
 ```
 ```{r}
-model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender + 
-                          household_income, data = reduced_data)
-model2 <- nnet::multinom(vote_2020 ~ household_income, data = reduced_data)
+#run this for faster but similar results
+model <- nnet::multinom(vote_2020 ~ state + race_ethnicity + gender +age_group,
+                        data = reduced_data)
 ```
 ```{r}
-summary(model)
+testing <- data[boundary:total_rows,]
+testing$vote_num <- if_else(testing$vote_2020 == "Donald Trump", 0, 1 )
+# probability <- model %>% add_predicted_draws(newdata = testing)
+
+# training <- data[0:boundary,]
+# training$vote_num <- if_else(training$vote_2020 == "Donald Trump", 0, 1 )
+
+probability <- predict(model, type = "probs", newdata = testing)
+probability <- if_else(probability>0.5,1,0)
+
+testing$probs <- probability
+
+testing <- testing %>% mutate(acc = probs==vote_num)
+
+table(testing$acc)
 ```
 
 
 ```{r}
-pre
+post_strat <- read_dta("inputs/data/usa_00001.dta")
+# Add the labels
+post_strat <- labelled::to_factor(post_strat)
+```
+
+```{r}
+levels(post_strat$age)
+```
+
+
+```{r}
+cleaned_post <- 
+  post_strat %>% 
+  select(stateicp,
+         race,
+         age,
+         sex,
+         educ
+  )
+
+cleaned_post$age <- as.character(cleaned_post$age)
+
+cleaned_post$age[grepl("less than", cleaned_post$age)] <- "0"
+cleaned_post$age[grepl("( in 1980 and 1990)", cleaned_post$age)] <- "90"
+cleaned_post$age[grepl("(100+ in 1960-1970)", cleaned_post$age)] <- "100"
+cleaned_post$age[grepl("(115+ in the 1990 internal data)", cleaned_post$age)
+                 ] <- "115"
+cleaned_post$age[grepl("(112+ in the 1980 internal data)", cleaned_post$age)
+                 ] <- "112"
+cleaned_post$age <- as.factor(cleaned_post$age)
+
+
+
+cleaned_post$age <- as.numeric(cleaned_post$age)
+
+cleaned_post$age_group <- cut(cleaned_post$age, breaks = c(18, 29, 44, 60, 200),
+                              labels = c("18-29","30-44","45-60","60+" ),
+                              right=FALSE)
+
+cleaned_post$education <- as.character(cleaned_post$educ)
+
+cleaned_post$education[
+    grepl("5", cleaned_post$education)&
+       grepl("years of college", cleaned_post$education)
+  ] <- 'Graduate Education'
+
+cleaned_post$education[
+    grepl("college", cleaned_post$education)
+  ] <- 'Post Secondary Degree'
+
+cleaned_post$education[
+    grepl("no schooling", cleaned_post$education)|
+      grepl("grade", cleaned_post$education)
+  ] <- 'High School or less'
+
+
+cleaned_post$education <- as.factor(cleaned_post$education)
+
+
+cleaned_post$race_ethnicity <- as.character(cleaned_post$race)
+cleaned_post$race_ethnicity <- plyr::mapvalues(
+  cleaned_post$race,
+  c("white", "black/african american/negro", "american indian or alaska native",
+    "chinese", "japanese", "other asian or pacific islander", "other race, nec",
+    "two major races", "three or more major races" ),
+  c("White", "Black, or African American", "American Indian or Alaska Native",
+    "Asian (Chinese)", "Asian (Japanese)",  "Asian (Other)", "Some other race",
+    "Some other race", "Some other race"))
+cleaned_post$race_ethnicity <- as.factor(cleaned_post$race_ethnicity)
+
+
+cleaned_post$gender <- plyr::mapvalues(cleaned_post$sex,
+                                       c("male","female"),
+                                       c("Male", "Female"))
+
+
+cleaned_post$state <- as.character(cleaned_post$stateicp)
+
+cleaned_post$state <- plyr::mapvalues(
+  cleaned_post$stateicp, c(tolower(state.name), "district of columbia"),
+  c(state.abb, "DC"))
+
+cleaned_post$state <- as.factor(cleaned_post$state)
+
+
+
+cleaned_post <- droplevels(cleaned_post)
+
+
+
+cleaned_post <- cleaned_post %>% select(race_ethnicity, gender, education,
+                                        state, age_group)
+# total_rows <- nrow(cleaned_post)
+# table(cleaned_post$gender)
+# table(cleaned_post$education)
+# table(cleaned_post$race_ethnicity)
+# table(cleaned_post$state)
+# table(cleaned_post$age_group)
+
+```
+
+
+```{r}
+cleaned_post$probability <- predict(model, type = "probs", newdata = cleaned_post)
+cleaned_post$probability
 ```
 
