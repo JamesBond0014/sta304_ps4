@@ -114,9 +114,9 @@ model <- brm(formula = vote_2020 ~ state + race_ethnicity + gender + age_group,
 ```
 
 ```{r}
-saveRDS(model, file = "model/3chain_2k-iter_no-edu_final.rds")
+# saveRDS(model, file = "model/3chain_2k-iter_no-edu_final.rds")
 
-# model <- readRDS("model/3chain_2k-iter_no-edu.rds")
+model <- readRDS("model/3chain_2k-iter_no-edu_final.rds")
 ```
 
 ```{r}
