@@ -77,6 +77,9 @@ reduced_data$race_ethnicity[
   ] <- ('Asian (Other)')
 reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
 
+reduced_data$vote_enum <- if_else(reduced_data$vote_2020 == "Donald Trump", 0, 1 )
+
+
 #drop unused levels
 reduced_data <- droplevels(reduced_data)
 
@@ -87,7 +90,7 @@ table(reduced_data$age_group)
 levels(reduced_data$education)
 levels(reduced_data$gender)
 levels(reduced_data$race_ethnicity)
-reduced_data <- reduced_data %>% select(vote_2020, age_group, education, gender, 
+reduced_data <- reduced_data %>% select(vote_2020,vote_enum, age_group, education, gender, 
                                         race_ethnicity, state)
 ```
 ```{r}
@@ -126,18 +129,17 @@ summary(model)
 
 ```{r}
 testing <- data[boundary:total_rows,]
-testing$vote_num <- if_else(testing$vote_2020 == "Donald Trump", 0, 1 )
 # probability <- model %>% add_predicted_draws(newdata = testing)
 
 # training <- data[0:boundary,]
-# training$vote_num <- if_else(training$vote_2020 == "Donald Trump", 0, 1 )
+# training$vote_num <- if_else(training$vote_2020 == "Donald Trump", 1, 0 )
 
 probability <- predict(model, type = "response", newdata = testing)
 probability <- if_else(probability[,1] >0.5,1,0)
 
 testing$probs <- probability
 
-testing <- testing %>% mutate(acc = probs==vote_num)
+testing <- testing %>% mutate(acc = probs==vote_enum)
 
 table(testing$acc)
 
@@ -264,8 +266,10 @@ probability <- predict(model, type = "response", newdata = pred_post)[,1]
 ```
 
 ```{r}
-table(if_else(probability>=0.5,"Joe Biden",
+table(if_else(probability<=0.5,"Joe Biden",
                                   "Donald Trump" ))
+
+summary(model)
 ```
 
 
