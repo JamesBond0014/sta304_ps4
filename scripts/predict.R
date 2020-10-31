@@ -9,7 +9,7 @@ library(tidybayes)
 library(statebins)
 
 
-model <- readRDS("model/script_model.rds")
+model <- readRDS("model/4chains_3000iter_.rds")
 
 post_strat <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
@@ -26,6 +26,8 @@ cleaned_post <-
 
 cleaned_post$age <- as.character(cleaned_post$age)
 
+
+
 cleaned_post$age[grepl("less than", cleaned_post$age)] <- "0"
 cleaned_post$age[grepl("( in 1980 and 1990)", cleaned_post$age)] <- "90"
 cleaned_post$age[grepl("(100+ in 1960-1970)", cleaned_post$age)] <- "100"
@@ -39,19 +41,18 @@ cleaned_post$age <- as.factor(cleaned_post$age)
 
 cleaned_post$age <- as.numeric(cleaned_post$age)
 
-cleaned_post <- cleaned_post[cleaned_post$age >= 18,]
+#remove people under 18 and over 78
+reduced_data <- reduced_data[reduced_data$age <= 78 &
+                               reduced_data$age >= 18,]
 
-
-cleaned_post$age_group <- cut(cleaned_post$age, breaks = c(18, 29, 44, 60, 200),
-                              labels = c("18-29","30-44","45-60","60+" ),
+cleaned_post$age_group <- cut(cleaned_post$age, breaks = seq(18, 88, 10),
+                              labels = c("18 to 28","29 to 38","39 to 48",
+                                         "49 to 58","59 to 68","69 to 78",
+                                         "79 and above"),
                               right=FALSE)
 
 cleaned_post$education <- as.character(cleaned_post$educ)
 
-cleaned_post$education[
-  grepl("5", cleaned_post$education)&
-    grepl("years of college", cleaned_post$education)
-] <- 'Graduate Education'
 
 cleaned_post$education[
   grepl("college", cleaned_post$education)
@@ -100,18 +101,15 @@ cleaned_post <- droplevels(cleaned_post)
 cleaned_post <- cleaned_post %>% select(race_ethnicity, gender, education,
                                         state, age_group)
 
-set.seed(101)
-pred_post <- cleaned_post
+save(cleaned_post, file = "inputs/cleaned_acs.Rda")
 
-pred_post <- pred_post[sample(nrow(pred_post)),]
-pred_post <- pred_post[0:50000,]
+cleaned_post <- load("inputs/cleaned_acs.Rda")
 
-probability <- predict(model, type = "response", newdata = pred_post)[,1]
+cell_counts <- cleaned_post %>%
+  group_by(race_ethnicity, gender, education, state, age_group) %>%
+  summarise(n = sum(perwt)) %>%
+  ungroup() %>%
+  select(race_ethnicity, gender, education, state, age_group, n)
 
+cell_counts
 
-table(if_else(probability<=0.5,"Joe Biden",
-              "Donald Trump" ))
-
-pred_post$pred<-if_else(probability<=0.5,"Joe Biden", "Donald Trump" )
-
-save(pred_post, file = "model/predictions.Rda")
