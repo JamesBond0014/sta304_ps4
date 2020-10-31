@@ -15,13 +15,16 @@ post_strat <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
 post_strat <- labelled::to_factor(post_strat)
 
+colnames(post_strat)
+
 cleaned_post <- 
   post_strat %>% 
   select(stateicp,
          race,
          age,
          sex,
-         educ
+         educ,
+         perwt
   )
 
 cleaned_post$age <- as.character(cleaned_post$age)
@@ -42,8 +45,8 @@ cleaned_post$age <- as.factor(cleaned_post$age)
 cleaned_post$age <- as.numeric(cleaned_post$age)
 
 #remove people under 18 and over 78
-reduced_data <- reduced_data[reduced_data$age <= 78 &
-                               reduced_data$age >= 18,]
+cleaned_post <- cleaned_post[cleaned_post$age <= 78 &
+                               cleaned_post$age >= 18,]
 
 cleaned_post$age_group <- cut(cleaned_post$age, breaks = seq(18, 88, 10),
                               labels = c("18 to 28","29 to 38","39 to 48",
@@ -99,17 +102,9 @@ cleaned_post <- droplevels(cleaned_post)
 
 
 cleaned_post <- cleaned_post %>% select(race_ethnicity, gender, education,
-                                        state, age_group)
+                                        state, age_group,perwt)
+head(cleaned_post)
+write.csv(x=cleaned_post, file="inputs/cleaned_acs.csv")
 
-save(cleaned_post, file = "inputs/cleaned_acs.Rda")
 
-cleaned_post <- load("inputs/cleaned_acs.Rda")
-
-cell_counts <- cleaned_post %>%
-  group_by(race_ethnicity, gender, education, state, age_group) %>%
-  summarise(n = sum(perwt)) %>%
-  ungroup() %>%
-  select(race_ethnicity, gender, education, state, age_group, n)
-
-cell_counts
 
