@@ -15,6 +15,7 @@ post_strat <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
 post_strat <- labelled::to_factor(post_strat)
 
+
 colnames(post_strat)
 
 cleaned_post <- 
@@ -26,6 +27,9 @@ cleaned_post <-
          educ,
          perwt
   )
+
+table(cleaned_post$educ)
+
 
 cleaned_post$age <- as.character(cleaned_post$age)
 
