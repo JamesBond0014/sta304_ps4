@@ -1,11 +1,14 @@
 ---
-title: "TBD"
-subtitle: "TBD"
+title: "Trump Expecting to Win 53% of Popular Vote in 2020 US Presidential Election"
+subtitle: "4% Confidence Interval Based on a Survey from July 2020"
 author: "TBD"
-thanks: "Code and data are available at: LINK."
 date: "`r format(Sys.time(), '%d %B %Y')`"
+thanks: "Code and data supporting this analysis are available at: https://github.com/JamesBond0014/sta304_ps4."
 abstract: |
-  | First sentence. Second sentence. Third sentence. Fourth sentence. 
+  | First sentence, second sentence, third sentence, fourth sentence
+  |
+  | **Keywords:** forecasting, US 2020 Election, Trump, Biden, multilevel regression with post-stratification
+
 output:
   bookdown::pdf_document2:
 toc: FALSE
@@ -18,14 +21,45 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(palmerpenguins)
 ```
-
+# Abstract
 # Introduction
-
-
-
-
 # Data
+To train our model to predict the outcome of the 2020 US presidential election, we used Wave 49 of the Nationscape Dataset (results from the week of June 18-24, 2020). We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Individual-level survey dataset".
 
+TODO: To make predictions on the outcome of the 2020 US presidential election, we used... We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Post-stratification dataset". The explanation of multilevel modelling with post-stratification can be found in the "Model" section.
+
+## Individual-level survey dataset
+The Nationscape Project is 16-month-long voter study (from July 2019 to January 2021) that conducts weekly surveys regarding the 2020 US presidential election. We will solely discuss Wave 49 of the Nationscape Dataset for the reminder of this paper.
+
+From June 18, 2020 to June 24, 2020, Nationscape collected data on public opinion about the 2020 presidential campaign and election by conducting online interviews. Their target is the American "population". Unfortunately, the published information on their methodology is not more specific as to what constitutes a member of the American population (are they interested in the opinions of noncitizens?). Presumably, their target population is all individuals presently residing in the United States. Nationscape uses the audience of market research platform Lucid as its sampling frame, i.e., the survey respondents on Lucid are the frame for this dataset. Finally, a sample matching the demographics of the American population is selected from the frame. Unfortunately, further details on their sampling methodology were not provided: potentially they could have conducted simple random stratified sampling or picked random samples from the sampling frame (passing on individuals if quotas for their demographic were met). After being contacted by Lucid to take the survey, respondents are immediately redirected to Nationscape survey software where the questionnaire starts.
+
+
+-methodology and approach processing the data
+-non response
+
+-key features, 
+-strengths
+-weaknesses
+-discuss variables you use
+-similar
+-combinining?
+-plot data
+-discuss plots 
+
+## Post-stratification dataset
+
+# Model
+
+\begin{equation}
+Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
+\end{equation}
+
+Equation \@ref(eq:bayes) seems useful, eh?
+
+Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
+@tausanovitch_vavreck_2019
+
+# Results
 Our data is of penguins (Figure \@ref(fig:bills)).
 
 ```{r bills, fig.cap="Bills of penguins", echo = FALSE}
@@ -55,31 +89,7 @@ ggplot(penguins, aes(x = island, fill = species)) +
 ```
 
 Talk way more about it. 
-
-
-
-# Model
-
-\begin{equation}
-Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
-\end{equation}
-
-Equation \@ref(eq:bayes) seems useful, eh?
-
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-@tausanovitch_vavreck_2019
-
-# Results
-
 # Discussion
-
-## First discussion point
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-## Third discussion point
 
 ## Weaknesses and next steps
 
@@ -93,5 +103,10 @@ Weaknesses and next steps should also be included.
 
 
 # References
+R
+Survey and ACS dataset
+https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-User-Guide_2020sep10.pdf
+https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representativeness-Assessment.pdf
+
 Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from [URL].
 
