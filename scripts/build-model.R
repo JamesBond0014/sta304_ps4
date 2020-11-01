@@ -12,7 +12,6 @@ raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
 
-colnames(raw_data)
 
 reduced_data <- 
   raw_data %>% 
