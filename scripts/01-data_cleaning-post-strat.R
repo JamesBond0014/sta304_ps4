@@ -29,7 +29,8 @@ reduced_data <-
          race,
          age,
          sex,
-         educ
+         educ,
+         perwt
   )
 
 
@@ -126,4 +127,43 @@ reduced_data <- droplevels(reduced_data)
 cleaned_data <- reduced_data %>% select(race_ethnicity, gender, education,
                                         state, age_group)
 
+# Plot Race
+perc_race <- cleaned_data %>% count(race_ethnicity) %>% mutate(perc = n/nrow(cleaned_data))
+race <- perc_race %>% ggplot(aes(x = race_ethnicity, y = perc)) + geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Race/Ethnicity of Respondents in 2018 ACS data",
+                                                                               x = "Race/Ethnicity", y = "Percentage", subtitle = "Figure X")
+race
 
+# Plot Gender
+perc_gender <- cleaned_data %>% count(gender) %>% mutate(perc = n/nrow(cleaned_data))
+gender <- perc_gender %>% ggplot(aes(x = gender, y = perc)) + geom_bar(stat = "identity") + 
+  labs(title = "Gender of Respondents in 2018 ACS data", x = "Gender", y = "Percentage", subtitle = "Figure X")
+gender
+
+# Plot education
+perc_education <- cleaned_data %>% count(education) %>% mutate(perc = n/nrow(cleaned_data))
+perc_education$education <- perc_education$education %>% factor(levels = c("High School or less", "Post Secondary Degree"))
+education <- perc_education %>% ggplot(aes(x = education, y = perc)) + geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Education of Respondents in 2018 ACS data",
+                                                                               x = "Education", y = "Percentage", subtitle = "Figure X")
+summary(cleaned_data$education)
+education
+
+# Explain 88 Olds are shit
+
+
+# Plot state
+perc_state <- cleaned_data %>% count(state) %>% mutate(perc = n/nrow(cleaned_data))
+perc_state$state <- perc_state$state %>% factor(levels = sort(as.character.factor(perc_state$state))) 
+state <- perc_state %>% ggplot(aes(x = state, y = perc)) + geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "State of Respondents in 2018 ACS data",
+                                                                               x = "State", y = "Percentage", subtitle = "Figure X")
+state
+
+# Plot age_group
+perc_age_group <- cleaned_data %>% count(age_group) %>% mutate(perc = n/nrow(cleaned_data))
+#perc_age_group$age_group <- perc_age_group$age_group %>% factor(levels = sort(as.character.factor(perc_age_group$age_group))) 
+age_group <- perc_age_group %>% ggplot(aes(x = age_group, y = perc)) + geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Age of Respondents in 2018 ACS data",
+                                                                               x = "Age Group", y = "Percentage", subtitle = "Figure X")
+age_group
