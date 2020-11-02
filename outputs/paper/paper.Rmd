@@ -496,15 +496,15 @@ grouped_bar_chart(grouped, "Education", "Percentage",
 ## Post-stratification
 
 ```{r}
-cell_counts <- readRDS("inputs/cell_counts.RDS")
-training_data <- readRDS("inputs/training_data.RDA")
-model <- readRDS("model/4chains_3000iter_.rds")
+cell_counts <- readRDS("../../inputs/cell_counts.RDS")
+training_data <- readRDS("../../inputs/training_data.RDA")
+model <- readRDS("../../model/4chains_3000iter_.rds")
 
-race_res <- readRDS("processed_data/race_res.RDS")
-gender_res <- readRDS("processed_data/gender_res.RDS")
-state_res <- readRDS("processed_data/state_res.RDS")
-age_res <- readRDS("processed_data/age_res.RDS")
-education_rest <- readRDS("processed_data/age_res.RDS")
+race_res <- readRDS("../../processed_data/race_res.RDS")
+gender_res <- readRDS("../../processed_data/gender_res.RDS")
+state_res <- readRDS("../../processed_data/state_res.RDS")
+age_res <- readRDS("../../processed_data/age_res.RDS")
+education_res <- readRDS("../../processed_data/education_res.RDS")
 
 ```
 
@@ -519,7 +519,7 @@ race_res %>%
   xlab("Race") + 
   geom_point(data = training_data %>% 
                group_by(race_ethnicity, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(race_ethnicity) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -542,7 +542,7 @@ state_res %>%
   xlab("State") + 
   geom_point(data = training_data %>% 
                group_by(state, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(state) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -565,7 +565,7 @@ age_res %>%
   xlab("Age") + 
   geom_point(data = training_data %>% 
                group_by(age_group, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(age_group) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -589,7 +589,7 @@ gender_res %>%
   xlab("Gender") + 
   geom_point(data = training_data %>% 
                group_by(gender, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(gender) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -600,15 +600,16 @@ gender_res %>%
 ```
 
 ```{r}
+# education_res$age_group <- as.factor(education_res$age_group)
+
 education_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(education), color = "MRP estimate")) + 
   geom_point() +
-   
   ylab("Proportion voting for Biden") + 
   xlab("Education") + 
   geom_point(data = training_data %>% 
                group_by(education, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(education) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -617,7 +618,7 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
-For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5%
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5% of the votes.
 
 # Discussion
 
