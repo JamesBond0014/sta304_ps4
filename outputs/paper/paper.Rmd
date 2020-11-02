@@ -21,6 +21,14 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(palmerpenguins)
 ```
+
+```{r}
+#load required data and models
+
+cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
+
+```
+
 # Abstract
 # Introduction
 # Data
@@ -106,6 +114,48 @@ age_group
 \begin{equation}
 Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
 \end{equation}
+
+Since our predictor y is a binary variable (Biden or Trump), we used a logistic regression in order build our model. A logistic regression predicts the likelihood of an outcome based on various independent variables and it fits a model on a log curve which is bound in the Y axis in the range of [0,1].. In our case, we judge the likelihood that an individual would vote for Joe Biden in comparison to Donald Trump, given the individuals age, gender, education, state, and race. Given these inputs and outputs, we can train our logistic regression model using BRMS to predict which values for each variable predicts certain votes, and this will be discussed further in the later section. In our model, as it is a binary predictor, we round the prediction to the nearest number (more than 0.5 is rounded to 1, meaning this individual is likely to vote for Joe Biden, and less than 0.5 is rounded to 0, meaning this individual is likely to vote to Donald Trump).
+
+One variable we discussed about including was annual income, however when we added the income lowered our cross validation score and the well discussed issues with self-reported income (bias, inaccurate estimations, not reporting) convinced us to disclude income. Another variable we debated on was education. Originally, education was included, however, education severely impacted our cross validation accuracy. We solved these issues by summarizing all education levels into 2 levels: at least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. Another variable that helped increase accuracy after manipulation was age, where it became a better independent variable after breaking age into groups on 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+) and leaving age as individual numeric values, however both of these breakdowns did not provide any significant value. 
+
+Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). 
+
+```{r}
+model_education <- readRDS("../../model/4chains_3000iter_.rds")
+
+reduced_data <- readRDS("../../inputs/training_data.Rda")
+
+
+total_rows <- nrow(reduced_data)
+
+# get updated columns (used for the model)
+reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender,
+                                        race_ethnicity, state)
+
+set.seed(50)
+#set
+shuffle_indices <- sample(total_rows)
+data <- reduced_data[shuffle_indices,]
+boundary <- as.integer(total_rows*0.95)
+
+training <- data[0:boundary,]
+
+testing <- data[boundary:total_rows,]
+
+#testing the accuracy of the model
+probability <- predict(model_education, type = "response", newdata = testing)
+probability <- if_else(probability[,1] >0.5,1,0)
+testing$probs <- probability
+testing <- testing %>% mutate(acc = probs==vote_biden)
+data.frame(table(testing$acc)) %>% 
+  ggplot(aes(x = Var1, y = Freq/(sum(Freq)))) +
+  geom_bar(stat="identity") +
+  xlab("Correct Prediction") +
+  ylab("Percent") +
+  ggtitle("Cross Validation Scores")
+
+```
 
 Equation \@ref(eq:bayes) seems useful, eh?
 

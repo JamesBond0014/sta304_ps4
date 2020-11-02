@@ -88,7 +88,7 @@ saveRDS(reduced_data, file = "inputs/training_data.Rda")
 total_rows <- nrow(reduced_data)
 
 #get updated columns (used for the model)
-reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender, 
+reduced_data <- reduced_data %>% select(vote_biden,age_group, gender, 
                                         race_ethnicity, state)
 
 set.seed(50)
@@ -124,4 +124,4 @@ table(testing$acc)
 
 
 #save the model for future uses
-saveRDS(model, file = "model/4chains_3000iter_.rds")
+saveRDS(model, file = "model/4chains_3000iter_no_edu.rds")
