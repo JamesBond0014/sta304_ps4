@@ -1,11 +1,10 @@
----
 title: "Biden Expected to Win 54% of Popular Vote in 2020 US Presidential Election"
 subtitle: "4% Confidence Interval Based on a Survey from June 2020"
 author: "James Bao, Zakir Chaudry, Alan Chen, Xinyi Zhang"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 thanks: "Code and data supporting this analysis are available at: https://github.com/JamesBond0014/sta304_ps4."
 abstract: |
-  | First sentence, second sentence, third sentence, fourth sentence
+  | After a shocking upset in the 2016 US Presidential election, everyone has their eyes on the 2020 election to determine the leader of the free world for the next four years. In this Paper we trained a model using survey level survey results . Our model predicts that Joe Biden will win the 2020 Presidential election with a 53.5% of the popular vote and a confidence level of 95%. Our prediction as well as our breakdown of votes by demographic group could potentially provide the candidates of the election with information on how to target voters.
   |
   | **Keywords:** forecasting, US 2020 Election, Trump, Biden, multilevel regression with post-stratification
 
@@ -25,9 +24,6 @@ library(palmerpenguins)
 # Load required data and models
 cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
 ```
-
-# Abstract
-After a shocking upset in the 2016 US Presidential election, everyone has their eyes on the 2020 election to determine the leader of the free world for the next four years. In this Paper we trained a model using survey level survey results . Our model predicts that Joe Biden will win the 2020 Presidential election with a 53.5% of the popular vote and a confidence level of 95%. Our prediction as well as our breakdown of votes by demographic group could potentially provide the candidates of the election with information on how to target voters.
 
 # Introduction
 
@@ -258,18 +254,19 @@ The ACS Questionnaire asks questions regarding every inhabitant in the residence
 
 As mentioned above, the variables we used were age (the age of the respondent), state (the state they lived in), gender (what gender they identified as), education (what their highest level of education was), and race/ethnicity of the respondent. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching up spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.   <-- This section is to be updated accordingly
 
-```{r create post-strat plots, eval=FALSE}
-cleaned_data <- labelled::to_factor(cleaned_data)
-
+```{r eval=FALSE}
 # Plot Race
 perc_race <- cleaned_data %>% count(race_ethnicity) %>% mutate(perc = n/nrow(cleaned_data))
 race <- perc_race %>% ggplot(aes(x = race_ethnicity, y = perc)) + geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Race/Ethnicity of Respondents in 2018 ACS data", x = "Race/Ethnicity", y = "Percentage", subtitle = "Figure X")
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Race/Ethnicity of Respondents in 2018 ACS data",
+                                                                               x = "Race/Ethnicity", y = "Percentage", subtitle = "Figure X")
+race
 
 # Plot Gender
 perc_gender <- cleaned_data %>% count(gender) %>% mutate(perc = n/nrow(cleaned_data))
 gender <- perc_gender %>% ggplot(aes(x = gender, y = perc)) + geom_bar(stat = "identity") + 
   labs(title = "Gender of Respondents in 2018 ACS data", x = "Gender", y = "Percentage", subtitle = "Figure X")
+gender
 
 # Plot education
 perc_education <- cleaned_data %>% count(education) %>% mutate(perc = n/nrow(cleaned_data))
@@ -277,18 +274,25 @@ perc_education$education <- perc_education$education %>% factor(levels = c("High
 education <- perc_education %>% ggplot(aes(x = education, y = perc)) + geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Education of Respondents in 2018 ACS data",
                                                                                x = "Education", y = "Percentage", subtitle = "Figure X")
+summary(cleaned_data$education)
+education
 
 # Explain 88 Olds are shit
+
 
 # Plot state
 perc_state <- cleaned_data %>% count(state) %>% mutate(perc = n/nrow(cleaned_data))
 perc_state <- labelled::to_factor(perc_state)
 
+perc_state$state <- perc_state$state %>% factor(levels = sort(as.character.factor(perc_state$state))) 
 state <- perc_state %>% ggplot(aes(x = state, y = perc)) + geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "State of Respondents in 2018 ACS data", x = "State", y = "Percentage", subtitle = "Figure X")
 
+state
+
 # Plot age_group
 perc_age_group <- cleaned_data %>% count(age_group) %>% mutate(perc = n/nrow(cleaned_data))
+#perc_age_group$age_group <- perc_age_group$age_group %>% factor(levels = sort(as.character.factor(perc_age_group$age_group))) 
 age_group <- perc_age_group %>% ggplot(aes(x = age_group, y = perc)) + geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Age of Respondents in 2018 ACS data",
                                                                                x = "Age Group", y = "Percentage", subtitle = "Figure X")
@@ -370,7 +374,7 @@ Using MRP provides many benefits. As mentioned, we can more accurately estimate 
 
 However, there are also cons to using MRP. For instance, we are limited to only use variables that are common and can be mapped to contain the same Fields in order to work. If one dataset has religion, and the second dataset does not, we are unable to include religion in our model. This can be challenging as information such as an individuals vote in 2016 may be extremely important as a variable, but since the ACS dataset does not contain such information, we are use it to our advantage. Further more, if a variable is broken down to a different granularity, we must group by the common group. For example, if dataset 1 has age grouped in age ranges of 3 and dataset 2 has age grouped in age ranges of 5 (eg. 5-8,9-12 vs 5-10,15-20) then we must map them into ranges that are multiples of 15. We cannot use groups of 3, because we cannot accurately break down groups of 5 into groups of 3. Therefore we lose granularity in situations where it may be desired. Another noted benefit is efficiency when predicting. Instead of inidivually predicting over 3 million people, we summarize all the comparisons and only predict on over 8000 individuals and multiply their proportions, which allows us to compute our predictions significantly faster. 
 
-In this case, using MRP makes sense as we have voting information provided by Nationscape, however this dataset does not contain a large enough sample size to estimate the population. We also have access to the ACS which contains enough data to estimate the population but it does not contain any information on who an individual may vote for in the upcoming election. Furthermore, there exists biases within our datasets which would skew results otherwise. Using MRP allows us to use both datasets in order to predict the overall U.s 2020 election
+In this case, using MRP makes sense as we have voting information provided by Nationscape, however this dataset does not contain a large enough sample size to estimate the population. We also have access to the ACS which contains enough data to estimate the population but it does not contain any information on who an individual may vote for in the upcoming election. However analyzing our ACS dataset, we did not notice much biases within our groups. Using MRP allows us to use both datasets in order to predict the overall U.s 2020 election
 
 https://arxiv.org/pdf/1908.06716.pdf
 https://www.sciencedirect.com/science/article/pii/S0261379409001176?casa_token=ec6M6gmXHpMAAAAA:GdXW-ErZjnoZ4GYv_TEPydUAhwppRK0GbPth6kXbSebh8Iz2kmmIMCc1LgczlhByHSMr57NGGmsp
@@ -512,5 +516,3 @@ https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representati
 Wu
 https://www.pewresearch.org/fact-tank/2020/10/26/what-the-2020-electorate-looks-like-by-party-race-and-ethnicity-age-education-and-religion/
 Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from [URL].
-
-
