@@ -21,7 +21,12 @@ library(tidyverse)
 library(knitr)
 library(palmerpenguins)
 ```
+```{r}
+#load required data and models
 
+cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
+
+```
 # Abstract
 After a shocking upset in the 2016 US Presidential election, everyone has their eyes on the 2020 election to determine the leader of the free world for the next four years. In this Paper we trained a model using survey level survey results . Our model predicts that Joe Biden will win the 2020 Presidential election with a 53.5% of the popular vote and a confidence level of 95%. Our prediction as well as our breakdown of votes by demographic group could potentially provide the candidates of the election with information on how to target voters.
 
@@ -292,18 +297,20 @@ age_group
 ```
 
 
+
 # Model
 
 \begin{equation}
 Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
 \end{equation}
 
-Since our predictor y is a binary variable (Biden or Trump), we used a logistic regression in order build our model. A logistic regression predicts the likelihood of an outcome based on various independent variables and it fits a model on a log curve which is bound in the Y axis in the range of [0,1].. In our case, we judge the likelihood that an individual would vote for Joe Biden in comparison to Donald Trump, given the individuals age, gender, education, state, and race. Given these inputs and outputs, we can train our logistic regression model using BRMS to predict which values for each variable predicts certain votes, and this will be discussed further in the later section. In our model, as it is a binary predictor, we round the prediction to the nearest number (more than 0.5 is rounded to 1, meaning this individual is likely to vote for Joe Biden, and less than 0.5 is rounded to 0, meaning this individual is likely to vote to Donald Trump).
+Equation \@ref(eq:bayes) seems useful, eh?
+
+Our model is built on MRP, which stands for multi-level regression with post-stratifications. We utlize multi-level regression in order to create a model that we can build predictions upon. Since our predictor y is a binary variable (Biden or Trump), we used a logistic regression in order build our model. A logistic regression predicts the likelihood of an outcome based on various independent variables and it fits a model on a log curve which is bound in the Y axis in the range of [0,1].. In our case, we judge the likelihood that an individual would vote for Joe Biden in comparison to Donald Trump, given the individuals age, gender, education, state, and race. Given these inputs and outputs, we can train our logistic regression model using BRMS to predict which values for each variable predicts certain votes, and this will be discussed further in the later section. In our model, as it is a binary predictor, we round the prediction to the nearest number (more than 0.5 is rounded to 1, meaning this individual is likely to vote for Joe Biden, and less than 0.5 is rounded to 0, meaning this individual is likely to vote to Donald Trump).
 
 One variable we discussed about including was annual income, however when we added the income lowered our cross validation score and the well discussed issues with self-reported income (bias, inaccurate estimations, not reporting) convinced us to disclude income. Another variable we debated on was education. Originally, education was included, however, education severely impacted our cross validation accuracy. We solved these issues by summarizing all education levels into 2 levels: at least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. Another variable that helped increase accuracy after manipulation was age, where it became a better independent variable after breaking age into groups on 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+) and leaving age as individual numeric values, however both of these breakdowns did not provide any significant value. 
 
 Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). This performed better than 50% (guessing) and through this we are able to gain some insight on how each variable affect the prediction. Furthermore, by investigating our inaccuracies (Figure N), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previous paragraphs, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College. 
-
 
 ```{r}
 model_education <- readRDS("../../model/4chains_3000iter_.rds")
@@ -357,8 +364,17 @@ data.frame(table(wrong)) %>%
   ggtitle("Cross Validation inaccuracies")
 
 ```
+We cannot directly apply our model on the ACS dataset as the dataset may not represent the American demographics accurately. For example, females tends to respond more to surveys than males, therefore in our dataset we may have 60% females and 40%males, meaning that our vote count with be biased towards females (eg. if females tends to vote Biden, we would have a bias towards Biden). Realistically, males and females should be around 50/50, so post-stratification allows us to adjust these weighting accordingly.
+When we perform post-stratification on ACS, we find all combinations of our variables and find the weight of each combinations representation within USA. Using PERWT variable provided by the ACS, we can calculate how much of the population each combination represents within the United States. As per the UPUMS webpage, "PERWT indicates how many persons in the U.S. population are represented by a given person in an IPUMS sample", meaning we can add all the people within the same combination of variables we are measuring and add their PERWT in order to have an estimate of how much the combination weighs. 
 
-Equation \@ref(eq:bayes) seems useful, eh?
+Using MRP provides many benefits. As mentioned, we can more accurately estimate the weight of our sample predictions in relation to the population, therefore we will not be heavily affected by the any bias the survey may have. If the survey does not have any bias, our estimates will not dramatically alter any proportions. It also allows us to use a small sample, and apply it to a much larger sample that better represents the population. In our example, we can use a  small scale election survey from Nationscape and train a model which allows us to predict the election results from the American Community Survey consisting of over 3 million data. Since the ACS dataset does not contain the main information we want (voting), we use Nationscape's survey to predict results. This is crucial, as collecting surveys with a useful sample size with regards to an upcoming election can be extremely expensive and time consuming, as these poll results may be time sensitive. The option to collect from a small sample size allows staticians to save money and time meanwhile providing significant results about the larger population by combining their surveys to general census information. 
+
+However, there are also cons to using MRP. For instance, we are limited to only use variables that are common and can be mapped to contain the same Fields in order to work. If one dataset has religion, and the second dataset does not, we are unable to include religion in our model. This can be challenging as information such as an individuals vote in 2016 may be extremely important as a variable, but since the ACS dataset does not contain such information, we are use it to our advantage. Further more, if a variable is broken down to a different granularity, we must group by the common group. For example, if dataset 1 has age grouped in age ranges of 3 and dataset 2 has age grouped in age ranges of 5 (eg. 5-8,9-12 vs 5-10,15-20) then we must map them into ranges that are multiples of 15. We cannot use groups of 3, because we cannot accurately break down groups of 5 into groups of 3. Therefore we lose granularity in situations where it may be desired. Another noted benefit is efficiency when predicting. Instead of inidivually predicting over 3 million people, we summarize all the comparisons and only predict on over 8000 individuals and multiply their proportions, which allows us to compute our predictions significantly faster. 
+
+In this case, using MRP makes sense as we have voting information provided by Nationscape, however this dataset does not contain a large enough sample size to estimate the population. We also have access to the ACS which contains enough data to estimate the population but it does not contain any information on who an individual may vote for in the upcoming election. Furthermore, there exists biases within our datasets which would skew results otherwise. Using MRP allows us to use both datasets in order to predict the overall U.s 2020 election
+
+https://arxiv.org/pdf/1908.06716.pdf
+https://www.sciencedirect.com/science/article/pii/S0261379409001176?casa_token=ec6M6gmXHpMAAAAA:GdXW-ErZjnoZ4GYv_TEPydUAhwppRK0GbPth6kXbSebh8Iz2kmmIMCc1LgczlhByHSMr57NGGmsp
 
 Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
 @tausanovitch_vavreck_2019
@@ -521,3 +537,5 @@ https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representati
 Wu
 https://www.pewresearch.org/fact-tank/2020/10/26/what-the-2020-electorate-looks-like-by-party-race-and-ethnicity-age-education-and-religion/
 Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from [URL].
+
+
