@@ -120,7 +120,6 @@ education_res <- model %>%
 
 saveRDS(education_res, file="processed_data/education_res.RDS")
 
-
 head(state_res)
 head(education_res)
 head(age_res)
