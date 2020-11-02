@@ -1,3 +1,11 @@
+#install.packages("brms")
+#install.packages("labelled")
+#install.packages("tidyverse")
+#install.packages("Metrics")
+#install.packages("tidybayes")
+#install.packages("statebins")
+
+
 library(plyr)
 library(dplyr)
 library(haven)
@@ -88,7 +96,7 @@ saveRDS(reduced_data, file = "inputs/training_data.Rda")
 total_rows <- nrow(reduced_data)
 
 #get updated columns (used for the model)
-reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender, 
+reduced_data <- reduced_data %>% select(vote_biden,age_group, gender, 
                                         race_ethnicity, state)
 
 set.seed(50)
@@ -112,7 +120,7 @@ model <- brm(formula = vote_biden ~ state + race_ethnicity + gender + age_group
              iter = 3000,
              cores = 2
 )
-
+ 
 testing <- data[boundary:total_rows,]
 
 #testing the accuracy of the model
@@ -124,4 +132,4 @@ table(testing$acc)
 
 
 #save the model for future uses
-saveRDS(model, file = "model/4chains_3000iter_.rds")
+saveRDS(model, file = "model/4chains_3000iter_no_edu.rds")
