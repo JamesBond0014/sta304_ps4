@@ -10,7 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+#load in counts for each demographic
 cell_counts <- readRDS("inputs/cell_counts.RDS")
+#load in a pre-trained model, more models can be found in models folder
+#models can be trained in the build-Model.R file
 model <- readRDS("model/4chains_3000iter_.rds")
 ```
 
@@ -25,23 +28,25 @@ overall_prop
 
 
 ```{r}
+#apply model on the post stratification data set
 overall_prop$predict <- predict(model, type = "response", newdata = overall_prop)
-overall_prop$predict <- overall_prop$predict[,1] 
-head(overall_prop$predict)
+
+overall_prop$vote_biden <- if_else(overall_prop$predict[,1] > 0.5, 1, 0)
 ```
 
 ```{r}
-overall_prop$vote <- if_else(overall_prop$predict >0.5, 1, 0)
-```
-
-```{r}
-overall_prop$vote_weight <- overall_prop$vote * overall_prop$prop
+overall_prop$vote_weight <- overall_prop$vote_biden * overall_prop$prop
 
 ```
 
 ```{r}
-sum(overall_prop$vote_weight)
 saveRDS(overall_prop, file='processed_data/predictions.RDS')
 ```
+
+```{r}
+biden <-sum(overall_prop$vote_weight)
+trump <- 1 - biden
+```
+
 
 

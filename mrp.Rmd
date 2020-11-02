@@ -26,6 +26,7 @@ model <- readRDS("model/4chains_3000iter_.rds")
 
 
 ```{r}
+#load the summarized results for each variable we used
 race_res <- readRDS("processed_data/race_res.RDS")
 gender_res <- readRDS("processed_data/gender_res.RDS")
 state_res <- readRDS("processed_data/state_res.RDS")
@@ -51,7 +52,6 @@ age_res %>%
              aes(age_group, prop, color = "MNCS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
   theme_bw(base_size = 14) 
-ggsave("images/age_plot.png", width = 8, height = 6)
 ```
 
 ```{r}
@@ -70,7 +70,6 @@ race_res %>%
              aes(race_ethnicity, prop, color = "MNCS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
   theme_bw(base_size = 14) 
-ggsave("images/race_plot.png", width = 8, height = 6)
 ```
 
 ```{r}
@@ -92,10 +91,12 @@ state_res %>%
   theme_bw() +
   coord_flip()
 
-ggsave("images/race_plot.png", width = 8, height = 6)
 ```
 
 ```{r}
+#show selected states for more clarity
+#include key, swing and heavy trump/heavy biden states for discussion
+
 filtered_state_res <- state_res %>% filter(state == "PA" | state == "VT" | 
                                            state == "MI" | state == "AR" |
                                           state == "WI")
@@ -137,7 +138,6 @@ gender_res %>%
              aes(gender, prop, color = "MNCS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
   theme_bw(base_size = 14) 
-ggsave("images/gender_plot.png", width = 8, height = 6)
 ```
 
 ```{r}
@@ -156,5 +156,4 @@ education_res %>%
              aes(education, prop, color = "MNCS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
   theme_bw(base_size = 14) 
-ggsave("images/education_plot.png", width = 8, height = 6)
 ```

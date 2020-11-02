@@ -112,7 +112,7 @@ model <- brm(formula = vote_biden ~ state + race_ethnicity + gender + age_group
              iter = 3000,
              cores = 2
 )
-
+ 
 testing <- data[boundary:total_rows,]
 
 #testing the accuracy of the model
