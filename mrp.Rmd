@@ -35,88 +35,96 @@ education_rest <- readRDS("processed_data/age_res.RDS")
 
 
 ```
+Charts below show the proportion of each demographic likely voting for Joe Biden in the up coming 2020 U.S election. The black dot represents the MRP estimate of prrportions, where as the Red dot represents the raw data proportions. When they are close (in most cases they are) it is all good. However sometimes they are not (education) then we can talk about maybe why (educated people dont like surveys apparently?)
 
-```{r}
+
+brief blurb about this graph:
+the representations are pretty close to the estimations, with the 18-28 and 29-38 being slightly over represented in the ACS dataset
+```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
+
 age_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(age_group), color = "MRP estimate")) + 
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
-  ylab("proportion keeping name") + 
-  xlab("age in 2020") + 
+  ylab("Proportion voting for Joe Biden") + 
+  xlab("Age") + 
   geom_point(data = training_data %>% 
                group_by(age_group, vote_biden) %>%
                dplyr::summarise(n = n()) %>% 
                group_by(age_group) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
-             aes(age_group, prop, color = "MNCS raw data")) +
-  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
-  theme_bw(base_size = 14) 
+             aes(age_group, prop, color = "ACS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
+  theme_bw(base_size = 14) +
+  coord_flip()
 ```
 
-```{r}
+```{r raceproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden Votes by race", message=FALSE, echo=FALSE}
 race_res %>% 
-  ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), color = "MRP estimate")) + 
+  ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), 
+             color = "MRP estimate")) + 
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
-  ylab("proportion keeping name") + 
-  xlab("age in 2020") + 
+  ylab("Proportion voting for Biden") + 
+  xlab("Race") + 
   geom_point(data = training_data %>% 
                group_by(race_ethnicity, vote_biden) %>%
                dplyr::summarise(n = n()) %>% 
                group_by(race_ethnicity) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
-             aes(race_ethnicity, prop, color = "MNCS raw data")) +
-  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
-  theme_bw(base_size = 14) 
+             aes(race_ethnicity, prop, color = "ACS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", 
+                                           "ACS raw data" = "red")) + 
+  theme_bw(base_size = 14) + coord_flip()
 ```
 
-```{r}
+```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of Biden Votes by state", message=FALSE, echo=FALSE}
 
 state_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(state), color = "MRP estimate")) + 
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
-  ylab("proportion keeping name") + 
-  xlab("age in 2020") + 
+   
+  ylab("Proportion voting for Biden") + 
+  xlab("State") + 
   geom_point(data = training_data %>% 
                group_by(state, vote_biden) %>%
                dplyr::summarise(n = n()) %>% 
                group_by(state) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
-             aes(state, prop, color = "MNCS raw data")) +
-  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+             aes(state, prop, color = "ACS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw() +
   coord_flip()
 
 ```
+Again the estimates are close to the raw data, this shows some of the proportion of votes of each state. Predicted swing states (538) such as Missouri, Wisconsin, Michigan and Pennsylvania as seen are very close to the 50% mark, whilst states such as VT and Arizona heavily favor Biden and Trump respectively
 
+https://projects.fivethirtyeight.com/swing-states-2020-election/
 ```{r}
 #show selected states for more clarity
 #include key, swing and heavy trump/heavy biden states for discussion
 
 filtered_state_res <- state_res %>% filter(state == "PA" | state == "VT" | 
                                            state == "MI" | state == "AR" |
-                                          state == "WI")
+                                          state == "WI" | state == "MO")
 filtered_training_data <- training_data %>% filter(state == "PA" | state == "VT" | 
                                            state == "MI" | state == "AR" |
-                                          state == "WI")
+                                          state == "WI" | state == "MO")
 filtered_state_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(state), color = "MRP estimate")) + 
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
-  ylab("proportion keeping name") + 
-  xlab("age in 2020") + 
+   
+  ylab("Proportion voting for Biden") + 
+  xlab("State") + 
   geom_point(data = filtered_training_data %>% 
                group_by(state, vote_biden) %>%
                dplyr::summarise(n = n()) %>% 
                group_by(state) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
-             aes(state, prop, color = "MNCS raw data")) +
-  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+             aes(state, prop, color = "ACS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw() +
   coord_flip()
 ```
@@ -126,17 +134,17 @@ filtered_state_res %>%
 gender_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(gender), color = "MRP estimate")) + 
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
-  ylab("proportion keeping name") + 
-  xlab("Gender in 2020") + 
+   
+  ylab("Proportion voting for Biden") + 
+  xlab("Gender") + 
   geom_point(data = training_data %>% 
                group_by(gender, vote_biden) %>%
                dplyr::summarise(n = n()) %>% 
                group_by(gender) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
-             aes(gender, prop, color = "MNCS raw data")) +
-  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+             aes(gender, prop, color = "ACS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw(base_size = 14) 
 ```
 
@@ -144,16 +152,16 @@ gender_res %>%
 education_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(education), color = "MRP estimate")) + 
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
-  ylab("proportion keeping name") + 
-  xlab("Gender in 2020") + 
+   
+  ylab("Proportion voting for Biden") + 
+  xlab("Education") + 
   geom_point(data = training_data %>% 
                group_by(education, vote_biden) %>%
                dplyr::summarise(n = n()) %>% 
                group_by(education) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
-             aes(education, prop, color = "MNCS raw data")) +
-  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+             aes(education, prop, color = "ACS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw(base_size = 14) 
 ```
