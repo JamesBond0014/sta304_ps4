@@ -1,0 +1,114 @@
+---
+title: "mrp"
+author: "James Bao"
+date: "10/31/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(haven)
+library(brms)
+library(tidybayes)
+library(statebins)
+library(dplyr)
+```
+
+```{r}
+#load the necessary model and data frames
+cell_counts <- readRDS("inputs/cell_counts.RDS")
+training_data <- readRDS("inputs/training_data.RDA")
+model <- readRDS("model/4chains_3000iter_.rds")
+
+```
+
+
+```{r}
+race_prop <- cell_counts %>% 
+  ungroup %>%
+  group_by(race_ethnicity) %>%
+  mutate(prop = n/sum(n)) %>%
+  ungroup()
+
+gender_prop <- cell_counts %>% 
+  ungroup %>%
+  group_by(gender) %>%
+  mutate(prop = n/sum(n)) %>%
+  ungroup()
+
+state_prop <- cell_counts %>% 
+  ungroup %>%
+  group_by(state) %>%
+  mutate(prop = n/sum(n)) %>%
+  ungroup()
+
+age_prop <- cell_counts %>% 
+  ungroup %>%
+  group_by(age_group) %>%
+  mutate(prop = n/sum(n)) %>%
+  ungroup()
+```
+
+```{r}
+race_res <- readRDS("processed_data/race_res.RDS")
+gender_res <- readRDS("processed_data/gender_res.RDS")
+state_res <- readRDS("processed_data/state_res.RDS")
+age_res <- readRDS("processed_data/age_res.RDS")
+
+```
+
+```{r}
+age_res %>% 
+  ggplot(aes(y = mean, x = forcats::fct_inorder(age_group), color = "MRP estimate")) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
+  ylab("proportion keeping name") + 
+  xlab("age in 2020") + 
+  geom_point(data = training_data %>% 
+               group_by(age_group, vote_biden) %>%
+               dplyr::summarise(n = n()) %>% 
+               group_by(age_group) %>% 
+               mutate(prop = n/sum(n)) %>% 
+               filter(vote_biden==1), 
+             aes(age_group, prop, color = "MNCS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+  theme_bw(base_size = 14) 
+ggsave("images/age_plot.png", width = 8, height = 6)
+```
+```{r}
+race_res %>% 
+  ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), color = "MRP estimate")) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
+  ylab("proportion keeping name") + 
+  xlab("age in 2020") + 
+  geom_point(data = training_data %>% 
+               group_by(race_ethnicity, vote_biden) %>%
+               dplyr::summarise(n = n()) %>% 
+               group_by(race_ethnicity) %>% 
+               mutate(prop = n/sum(n)) %>% 
+               filter(vote_biden==1), 
+             aes(race_ethnicity, prop, color = "MNCS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+  theme_bw(base_size = 14) 
+ggsave("images/race_plot.png", width = 8, height = 6)
+```
+```{r}
+state_res %>% 
+  ggplot(aes(y = mean, x = forcats::fct_inorder(state), color = "MRP estimate")) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) + 
+  ylab("proportion keeping name") + 
+  xlab("age in 2020") + 
+  geom_point(data = training_data %>% 
+               group_by(state, vote_biden) %>%
+               dplyr::summarise(n = n()) %>% 
+               group_by(state) %>% 
+               mutate(prop = n/sum(n)) %>% 
+               filter(vote_biden==1), 
+             aes(state, prop, color = "MNCS raw data")) +
+  scale_color_manual(name = "", values = c("MRP estimate" = "black", "MNCS raw data" = "red")) + 
+  theme_bw(base_size = 14) 
+ggsave("images/race_plot.png", width = 8, height = 6)
+```

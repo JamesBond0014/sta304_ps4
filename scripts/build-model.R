@@ -12,7 +12,6 @@ raw_data <- read_dta("inputs/data/ns20200625/ns20200625.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
 
-colnames(raw_data)
 
 reduced_data <- 
   raw_data %>% 
@@ -29,7 +28,6 @@ reduced_data <- reduced_data[complete.cases(reduced_data),]
 #filtering out for only Trump and Biden voters
 reduced_data <- reduced_data[reduced_data$vote_2020 == "Donald Trump" |
                                reduced_data$vote_2020 == "Joe Biden",]
-table(complete.cases(reduced_data))
 
 
 reduced_data$vote_biden <- plyr::mapvalues(reduced_data$vote_2020, 
@@ -84,7 +82,7 @@ reduced_data$race_ethnicity <- as.factor(reduced_data$race_ethnicity)
 #drop unused levels
 reduced_data <- droplevels(reduced_data)
 
-save(reduced_data, file = "data/training_data.Rda")
+saveRDS(reduced_data, file = "inputs/training_data.Rda")
 
 
 total_rows <- nrow(reduced_data)

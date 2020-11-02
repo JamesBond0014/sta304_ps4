@@ -15,6 +15,8 @@ post_strat <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
 post_strat <- labelled::to_factor(post_strat)
 
+
+
 colnames(post_strat)
 
 cleaned_post <- 
@@ -26,6 +28,8 @@ cleaned_post <-
          educ,
          perwt
   )
+
+
 
 cleaned_post$age <- as.character(cleaned_post$age)
 
@@ -54,8 +58,11 @@ cleaned_post$age_group <- cut(cleaned_post$age, breaks = seq(18, 88, 10),
                                          "79 and above"),
                               right=FALSE)
 
-cleaned_post$education <- as.character(cleaned_post$educ)
+a<-table(post_strat$educ)
+a<-a/nrow(post_strat)
 
+
+cleaned_post$education <- as.character(cleaned_post$educ)
 
 cleaned_post$education[
   grepl("college", cleaned_post$education)
