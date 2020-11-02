@@ -1,3 +1,11 @@
+#install.packages("brms")
+#install.packages("labelled")
+#install.packages("tidyverse")
+#install.packages("Metrics")
+#install.packages("tidybayes")
+#install.packages("statebins")
+
+
 library(plyr)
 library(dplyr)
 library(haven)
