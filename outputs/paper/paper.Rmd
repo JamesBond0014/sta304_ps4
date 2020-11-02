@@ -622,7 +622,23 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
-For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5% of the votes.
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes. 
+
+```{r}
+
+overall_prop <- readRDS('../../processed_data/predictions.RDS')
+biden <-sum(overall_prop$vote_weight)
+trump <- 1 - biden
+
+Candidates <- c("Biden", "Trump")
+Percentage <- c(biden, trump)
+
+data.frame(Candidates, Percentage) %>% 
+  ggplot(aes(x = Candidates, 
+             y= Percentage)) +
+  geom_bar(stat = "identity")
+```
+
 
 # Discussion
 
