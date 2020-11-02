@@ -1,3 +1,4 @@
+---
 title: "Biden Expected to Win 54% of Popular Vote in 2020 US Presidential Election"
 subtitle: "4% Confidence Interval Based on a Survey from June 2020"
 author: "James Bao, Zakir Chaudry, Alan Chen, Xinyi Zhang"
