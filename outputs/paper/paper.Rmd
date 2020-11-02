@@ -496,6 +496,10 @@ grouped_bar_chart(grouped, "Education", "Percentage",
 ## Post-stratification
 
 ```{r}
+cell_counts <- readRDS("inputs/cell_counts.RDS")
+training_data <- readRDS("inputs/training_data.RDA")
+model <- readRDS("model/4chains_3000iter_.rds")
+
 race_res <- readRDS("processed_data/race_res.RDS")
 gender_res <- readRDS("processed_data/gender_res.RDS")
 state_res <- readRDS("processed_data/state_res.RDS")
@@ -613,6 +617,7 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5%
 
 # Discussion
 
