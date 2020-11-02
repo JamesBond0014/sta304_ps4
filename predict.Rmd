@@ -25,12 +25,13 @@ overall_prop
 
 
 ```{r}
-overall_prop$predict <- predict(model, type = "response", newdata = overall_prop)[,1]
-nrow(overall_prop$predict)
+overall_prop$predict <- predict(model, type = "response", newdata = overall_prop)
+overall_prop$predict <- overall_prop$predict[,1] 
+head(overall_prop$predict)
 ```
 
 ```{r}
-overall_prop$vote <- ifelse(overall_prop$predict >0.5, 1, 0)
+overall_prop$vote <- if_else(overall_prop$predict >0.5, 1, 0)
 ```
 
 ```{r}
@@ -39,8 +40,8 @@ overall_prop$vote_weight <- overall_prop$vote * overall_prop$prop
 ```
 
 ```{r}
-head(overall_prop$vote_weight)
-
+sum(overall_prop$vote_weight)
+saveRDS(overall_prop, file='processed_data/predictions.RDS')
 ```
 
 
