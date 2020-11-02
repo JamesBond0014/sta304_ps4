@@ -119,7 +119,8 @@ Since our predictor y is a binary variable (Biden or Trump), we used a logistic 
 
 One variable we discussed about including was annual income, however when we added the income lowered our cross validation score and the well discussed issues with self-reported income (bias, inaccurate estimations, not reporting) convinced us to disclude income. Another variable we debated on was education. Originally, education was included, however, education severely impacted our cross validation accuracy. We solved these issues by summarizing all education levels into 2 levels: at least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. Another variable that helped increase accuracy after manipulation was age, where it became a better independent variable after breaking age into groups on 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+) and leaving age as individual numeric values, however both of these breakdowns did not provide any significant value. 
 
-Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). 
+Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). This performed better than 50% (guessing) and through this we are able to gain some insight on how each variable affect the prediction. Furthermore, by investigating our inaccuracies (Figure N), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previous paragraphs, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College. 
+
 
 ```{r}
 model_education <- readRDS("../../model/4chains_3000iter_.rds")
@@ -154,6 +155,23 @@ data.frame(table(testing$acc)) %>%
   xlab("Correct Prediction") +
   ylab("Percent") +
   ggtitle("Cross Validation Scores")
+```
+
+
+```{r}
+wrong <- as.numeric(testing$vote_biden) - as.numeric(testing$probs) - 1
+
+
+wrong <- plyr::mapvalues(wrong, c(-1,0,1), c("False Positive", 
+                                                   "Correct",
+                                                   "False Negative"))
+
+data.frame(table(wrong)) %>% 
+  ggplot(aes(x = wrong, y = Freq/sum(Freq)))+
+  geom_bar(stat="identity") +
+  xlab("Prediction Correctness") +
+  ylab("Total")+
+  ggtitle("Cross Validation inaccuracies")
 
 ```
 
