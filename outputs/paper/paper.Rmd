@@ -26,7 +26,7 @@ library(palmerpenguins)
 # Data
 To train our model to predict the outcome of the 2020 US presidential election, we used Wave 49 of the Nationscape Dataset (results from the week of June 18-24, 2020). We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Individual-level survey dataset".
 
-TODO: To make predictions on the outcome of the 2020 US presidential election, we used... We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Post-stratification dataset". The explanation of multilevel modelling with post-stratification can be found in the "Model" section.
+TODO: To make predictions on the outcome of the 2020 US presidential election, we used... We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Post-stratification dataset". The explanation of multilevel modeling with post-stratification can be found in the "Model" section.
 
 ## Individual-level survey dataset
 The Nationscape Project is 16-month-long voter study (from July 2019 to January 2021) that conducts weekly surveys regarding the 2020 US presidential election. We will solely discuss Wave 49 of the Nationscape Dataset for the reminder of this paper.
