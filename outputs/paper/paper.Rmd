@@ -345,40 +345,39 @@ Due to the nature of our methodology, we are able to directly compare and contra
 There is a major difference in education distribution across surveys as shown in Figure \@ref(fig:poststratedu) where only 53% of respondents had some level of post secondary education compared to 71% in Figure \@ref(fig:educationdist). This better matches the data reported in the US, indicating that the true level of post secondary education is much lower than represented in the Nationscape survey (Figure \@ref(fig:educationdist)). Lastly, the state distribution looks proportional to the American population (Figure \@ref(fig:poststratstate)) after conducting the same sanity check as before. The discrepancy between the Nationscape survey data and the post-stratification data with regards to age as well as education indicates how important it is that we are using multi-level regression model with post-stratification to predict the popular vote. 
 
 # Model
+The purpose of our model is to predict a person's vote in the 2020 US election given their characteristics (eg. income, race, gender, etc.). The dependent variable is a binary categorical variable, where 0 represents voting for Trump and 1 represents voting for Biden. The independent variables are the characteristics of the person. To avoid multicollinearity which causes unreliable regression estimates, a few carefully selected independent variables were used for our model. One criteria for the selection was that the variables had to be both present in the Nationscapes dataset and the ACS dataset, so that they be included for post-stratification. Another criteria is that the characteristic should group people that share a similar perspective which may impact on their voting decision. Through literature research (Uppal and LaRochelle-Cote, 2015), we found that some helpful indicators were age, gender, education, state, race, and self-reported income. To finalize the selection, characteristics should not be highly correlated and the data provided should make logical sense. Since the data quality for income was generally poor and it worsened the model performance, income was included in the model. Therefore, the predictors used for the model are age, gender, education, state, and race.
+
+Due to the fact that the data may have some under-representations or over-representations of certain charcteristics compared to the actual distributions in the population, the prediction accuracy can be biased based on the respondents of the surveyed data. Hence, we used multi-level regression with post-stratification (MRP) to adjust the influence of each subgroup of the respondants to get a better match on the actual population distribution. To do this, a multi-level model is required as well as another resource (ACS dataset in our case) for post-stratification.
+
+Since the goal is to do binary classification using multiple explanatory variables, binary logistic regression is a suitable method for the model. We used logistic regression to predict the probability of a person's voting choice and determine their vote by rounding to the nearest represented binary categorical variable. Logistic regression takes independent variables (age, gender, education, state, and race) as inputs. Based on the assigned weights and a logit function, the output will be a probability [0,1] of voting for Biden/Trump. Equation 1 is the equation of the logistic regression model and this defines the multi-level regression part of MRP:
+
+Equation 1: Logistic regression model
 \begin{equation}
-Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
+Pr(Y_i \in \{Trump, Biden\}) = logit^{-1}(\alpha_{j[i]}^{\textrm{age}} + \alpha_{j[i]}^{\textrm{gender}} + \alpha_{j[i]}^{\textrm{edu}} + \alpha_{j[i]}^{\textrm{state}} + \alpha_{j[i]}^{\textrm{race}})
 \end{equation}
 
-\@ref(eq:bayes)
+The Nationsacpes dataset contains the characteristics of a voter and also their vote, so the model was trained by using cross validation split on that dataset. 95% of the dataset was used as the training set to determine the best weights for the model and the remaining 5% of the dataset was used for the test set to verify the accuracy of the model. The vast majority of the data is used for the training set because we wanted to ensure that the data does not overfit due to lack of data. The logistic regression model was implemented using the BRMS library.
 
-Our model is built on MRP, which stands for multi-level regression with post-stratification. We utilize multi-level regression in order to create a model that we can generate predictions with. Since our response variable is a binary variable (Biden or Trump), we used logistic regression to order build our model. A logistic regression model predicts the likelihood of an outcome based on various independent variables and it fits a model on a log curve which is bound in the Y axis in the range of [0,1]. In our case, we judge the likelihood that an individual would vote for Joe Biden in comparison to Donald Trump, given the individuals age, gender, education, state, and race. Given these inputs and outputs, we can train our logistic regression model using BRMS to predict which values for each variable predicts certain votes, and this will be discussed further in the later section. In our model, as it is a binary predictor, we round the prediction to the nearest number (more than 0.5 is rounded to 1, meaning this individual is likely to vote for Joe Biden, and less than 0.5 is rounded to 0, meaning this individual is likely to vote to Donald Trump).
+Furthermore, there were many adjustments that had to be done with the inputs to improve model accuracy. Apart from self-reported income, education was another independent variable that was debated on whether it should be included in the model. Education severely impacted our cross validation accuracy, due to a wide range of values which were too specific for our purpose. These issues were resolved by summarizing all education levels into 2 levels: At least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. 
 
-One variable we discussed about including was annual income, however when we added the income lowered our cross validation score and the well discussed issues with self-reported income (bias, inaccurate estimations, not reporting) convinced us to disclude income. Another variable we debated on was education. Originally, education was included, however, education severely impacted our cross validation accuracy. We solved these issues by summarizing all education levels into 2 levels: at least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. Another variable that helped increase accuracy after manipulation was age, where it became a better independent variable after breaking age into groups on 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+) and leaving age as individual numeric values, however both of these breakdowns did not provide any significant value. 
+Another variable that initially caused inaccurate results was age. There was no clear trend in having age as a numeric continuous value for predicting votes. As a result, the numerical age values were grouped into 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+); however, that split was not able to capture the pattern in the age groups because the model accuracy worsened. So grouping age by 10's was the adjustment that gave better results and this is the configuration that was included in the model.
 
-Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). This performed better than 50% (guessing) and through this we are able to gain some insight on how each variable affect the prediction. Furthermore, by investigating our inaccuracies (Figure N), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previous paragraphs, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College. 
+Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). This performed better than 50% (guessing) and through this we are able to gain some insight on how each variable affect the prediction. Furthermore, by investigating our inaccuracies (Figure N), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previously, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College.  
 
 ```{r}
 model_education <- readRDS("../../model/4chains_3000iter_.rds")
-
 reduced_data <- readRDS("../../inputs/training_data.Rda")
-
-
 total_rows <- nrow(reduced_data)
-
 # get updated columns (used for the model)
 reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender,
                                         race_ethnicity, state)
-
 set.seed(50)
 #set
 shuffle_indices <- sample(total_rows)
 data <- reduced_data[shuffle_indices,]
 boundary <- as.integer(total_rows*0.95)
-
 training <- data[0:boundary,]
-
 testing <- data[boundary:total_rows,]
-
 #testing the accuracy of the model
 probability <- predict(model_education, type = "response", newdata = testing)
 probability <- if_else(probability[,1] >0.5,1,0)
@@ -395,19 +394,15 @@ data.frame(table(testing$acc)) %>%
 
 ```{r}
 wrong <- as.numeric(testing$vote_biden) - as.numeric(testing$probs) - 1
-
-
 wrong <- plyr::mapvalues(wrong, c(-1,0,1), c("False Positive", 
                                                    "Correct",
                                                    "False Negative"))
-
 data.frame(table(wrong)) %>% 
   ggplot(aes(x = wrong, y = Freq/sum(Freq)))+
   geom_bar(stat="identity") +
   xlab("Prediction Correctness") +
   ylab("Total")+
   ggtitle("Cross Validation inaccuracies")
-
 ```
 We cannot directly apply our model on the ACS dataset as the dataset may not represent the American demographics accurately. For example, females tends to respond more to surveys than males, therefore in our dataset we may have 60% females and 40%males, meaning that our vote count with be biased towards females (eg. if females tends to vote Biden, we would have a bias towards Biden). Realistically, males and females should be around 50/50, so post-stratification allows us to adjust these weighting accordingly.
 When we perform post-stratification on ACS, we find all combinations of our variables and find the weight of each combinations representation within USA. Using PERWT variable provided by the ACS, we can calculate how much of the population each combination represents within the United States. As per the UPUMS webpage, "PERWT indicates how many persons in the U.S. population are represented by a given person in an IPUMS sample", meaning we can add all the people within the same combination of variables we are measuring and add their PERWT in order to have an estimate of how much the combination weighs. 
@@ -547,7 +542,11 @@ race_res <- readRDS("../../processed_data/race_res.RDS")
 gender_res <- readRDS("../../processed_data/gender_res.RDS")
 state_res <- readRDS("../../processed_data/state_res.RDS")
 age_res <- readRDS("../../processed_data/age_res.RDS")
+<<<<<<< HEAD
 education_res <- readRDS("../../processed_data/age_res.RDS")
+=======
+education_res <- readRDS("../../processed_data/education_res.RDS")
+>>>>>>> 472d2a58c815508dcc08c77abee53308d6f80e97
 
 ```
 
@@ -562,7 +561,7 @@ race_res %>%
   xlab("Race") + 
   geom_point(data = training_data %>% 
                group_by(race_ethnicity, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(race_ethnicity) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -585,7 +584,7 @@ state_res %>%
   xlab("State") + 
   geom_point(data = training_data %>% 
                group_by(state, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(state) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -608,7 +607,7 @@ age_res %>%
   xlab("Age") + 
   geom_point(data = training_data %>% 
                group_by(age_group, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(age_group) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -632,7 +631,7 @@ gender_res %>%
   xlab("Gender") + 
   geom_point(data = training_data %>% 
                group_by(gender, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(gender) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -642,16 +641,21 @@ gender_res %>%
   coord_flip()
 ```
 
+<<<<<<< HEAD
 ```{r eval=FALSE}
+=======
+```{r}
+# education_res$age_group <- as.factor(education_res$age_group)
+
+>>>>>>> 472d2a58c815508dcc08c77abee53308d6f80e97
 education_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(education), color = "MRP estimate")) + 
   geom_point() +
-   
   ylab("Proportion voting for Biden") + 
   xlab("Education") + 
   geom_point(data = training_data %>% 
                group_by(education, vote_biden) %>%
-               dplyr::summarise(n = n()) %>% 
+               dplyr::summarize(n = n()) %>% 
                group_by(education) %>% 
                mutate(prop = n/sum(n)) %>% 
                filter(vote_biden==1), 
@@ -660,9 +664,29 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
-For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5%
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5% of the votes.
 
 # Discussion
+Figure 1 features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
+
+Regardless of the reason most young voters support Biden, it’s imperative to realize the repercussions of this. Relative to the 2016 election, young voters are coming out (metaphorically) in droves to vote, be it due to their own stronger opinions, voting drives and increased voting awareness online, or any other facet of their lives. In Texas alone, 1.3 million voters under 30 have already cast their ballot, surpassing the TOTAL number of young votes from 2016 (Texas). This can have huge effects nationally, creating a greater likelihood of a Biden victory. 
+
+Contrasting this are the older populations. The majority of voters ages 49 and above support Trump. However, a key point of note is that the difference between Biden support and Trump support is much lower than with younger voters. Given this, there’s not as much change in the way of Trump. That said, in typical elections this does indeed make a huge difference regardless, as it’s the older voters that vote the most (old). That’s why it’s so important that many young voters are actually voting compared to before, as this drive to vote acts a form of mitigation against the older voters’ support of Trump.
+
+•	https://www.pewresearch.org/fact-tank/2014/07/09/the-politics-of-american-generations-how-age-affects-attitudes-and-voting-behavior/
+•	https://www.texasobserver.org/young-voters-texas-2020/
+•	https://www.mckinsey.com/featured-insights/employment-and-growth/poorer-than-their-parents-a-new-perspective-on-income-inequality#
+•	https://pubmed.ncbi.nlm.nih.gov/10750310/
+
+Figure 2’s comparison of the votes by gender reveals some interesting findings. While the majority of male voters support Trump, the real highlight of this figure is the fact that nearly 60% of female voters support Biden, essentially twice the difference between Biden and Trump for male voters. Again, there’s many reasons why this could be the case, but there are two major reasons that present themselves. 
+
+The first is the way that Trump has treated women in the past, a notable example being his quote “Grab ‘em by the pussy” (tape). The other reason that stands out is the Republican Party’s stance against abortion, an important women’s right issue. This has only been further exemplified with the recent nomination and appointment of Amy Coney to the supreme court, who maintains a personal belief that abortion is immoral and clerked for Justice Scalia, who was a major critic of Roe v. Wade, the case that set the legal precedent for abortion (bbc). 
+
+Overall, while there in majority men vote support Trump, a greater percentage of women support Biden. In conjunction with the metric that women vote more than man, this finding supports a Biden victory. (gender diff)
+
+•	https://www.nytimes.com/2016/10/08/us/donald-trump-tape-transcript.html
+•	https://www.bbc.com/news/election-us-2020-54512678
+•	https://cawp.rutgers.edu/sites/default/files/resources/genderdiff.pdf
 
 ## Weaknesses and next steps
 
@@ -685,6 +709,10 @@ https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-User-Guide_2020
 https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representativeness-Assessment.pdf
 Wu
 https://www.pewresearch.org/fact-tank/2020/10/26/what-the-2020-electorate-looks-like-by-party-race-and-ethnicity-age-education-and-religion/
+
+Model Stuff:
+https://www150.statcan.gc.ca/n1/pub/75-001-x/2012001/article/11629-eng.htm
+
 ACS stuff:
 https://www2.census.gov/geo/pdfs/education/Uhl_CAS_2011.pdf
 https://www.census.gov/programs-surveys/acs/technical-documentation/errata/120.html

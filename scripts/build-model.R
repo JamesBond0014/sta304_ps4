@@ -107,7 +107,8 @@ boundary <- as.integer(total_rows*0.95)
 
 training <- data[0:boundary,]
 
-
+nrow(training)
+nrow(data)-nrow(training)
 
 #train the model
 model <- brm(formula = vote_biden ~ state + race_ethnicity + gender + age_group 
