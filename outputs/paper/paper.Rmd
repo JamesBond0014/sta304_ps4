@@ -345,79 +345,43 @@ Due to the nature of our methodology, we are able to directly compare and contra
 There is a major difference in education distribution across surveys as shown in Figure \@ref(fig:poststratedu) where only 53% of respondents had some level of post secondary education compared to 71% in Figure \@ref(fig:educationdist). This better matches the data reported in the US, indicating that the true level of post secondary education is much lower than represented in the Nationscape survey (Figure \@ref(fig:educationdist)). Lastly, the state distribution looks proportional to the American population (Figure \@ref(fig:poststratstate)) after conducting the same sanity check as before. The discrepancy between the Nationscape survey data and the post-stratification data with regards to age as well as education indicates how important it is that we are using multi-level regression model with post-stratification to predict the popular vote. 
 
 # Model
-The purpose of our model is to predict a person's vote in the 2020 US election given their characteristics (eg. income, race, gender, etc.). The dependent variable is a binary categorical variable, where 0 represents voting for Trump and 1 represents voting for Biden. The independent variables are the characteristics of the person. To avoid multicollinearity which causes unreliable regression estimates, a few carefully selected independent variables were used for our model. One criteria for the selection was that the variables had to be both present in the Nationscapes dataset and the ACS dataset, so that they be included for post-stratification. Another criteria is that the characteristic should group people that share a similar perspective which may impact on their voting decision. Through literature research (Uppal and LaRochelle-Cote, 2015), we found that some helpful indicators were age, gender, education, state, race, and self-reported income. To finalize the selection, characteristics should not be highly correlated and the data provided should make logical sense. Since the data quality for income was generally poor and it worsened the model performance, income was included in the model. Therefore, the predictors used for the model are age, gender, education, state, and race.
+The purpose of our model is to predict a person's vote in the 2020 US election given their demographic characteristics. The dependent variable is a binary categorical variable, where 0 represents voting for Trump and 1 represents voting for Biden. The independent variables are the characteristics of the person (age, gender, race, state, and education). To avoid multicollinearity (when there is a relationship between the independent variables) which causes unreliable regression estimates, a few carefully selected independent variables were used for our model. One criteria for the selection was that the variables had to be both present in the Nationscapes dataset and the ACS dataset, so that they be included in post-stratification. Another criteria is that the characteristic should group people that share a similar perspective which may impact on their voting decision. Through literature research (Uppal and LaRochelle-Cote, 2015), we found that some helpful indicators were age, gender, race, state, education, and self-reported income. To finalize the selection, characteristics should not be highly correlated and the data provided should make logical sense. Since the data quality for income was generally poor and it worsened the model performance, income was ultimately excluded from the model. Therefore, the predictors used for the model are age, gender, race, state, and education.
 
-Due to the fact that the data may have some under-representations or over-representations of certain charcteristics compared to the actual distributions in the population, the prediction accuracy can be biased based on the respondents of the surveyed data. Hence, we used multi-level regression with post-stratification (MRP) to adjust the influence of each subgroup of the respondants to get a better match on the actual population distribution. To do this, a multi-level model is required as well as another resource (ACS dataset in our case) for post-stratification.
+We found when exploring and graphing the data in the section above that the survey data has underrepresented or overrepresented certain characteristics compared to the actual distributions in the population (namely younger individuals were underrepresented and individuals with higher education were overrepresented in the Nationscape survey data). Therefore, if we were to predict the outcome of the popular vote using the demographic proportions found in the Nationscape survey, we would find that the prediction is biased because the survey sample is not representative of the American population. Hence, we use multi-level regression with post-stratification (MRP) to adjust the influence of each subgroup of the respondents to get a better match on the actual population distribution. To do this, a multi-level model is required as well as another resource (ACS dataset in our case) for post-stratification.
 
-Since the goal is to do binary classification using multiple explanatory variables, binary logistic regression is a suitable method for the model. We used logistic regression to predict the probability of a person's voting choice and determine their vote by rounding to the nearest represented binary categorical variable. Logistic regression takes independent variables (age, gender, education, state, and race) as inputs. Based on the assigned weights and a logit function, the output will be a probability [0,1] of voting for Biden/Trump. Equation 1 is the equation of the logistic regression model and this defines the multi-level regression part of MRP:
+## Multi-level logistic regression model
+Since we have represented predicting the popular vote as a binary classification problem using multiple explanatory variables, binary logistic regression is a suitable choice for the model. We use logistic regression to predict the probability of a person voting for Biden and determine their vote by rounding to the nearest represented binary categorical variable. Logistic regression takes independent variables (in our case age, gender, race, state, and education, state, and race) as inputs. Based on the assigned weights and a logit function, the output will be a probability [0,1] of voting for Biden/Trump. Equation \@ref(eq:lrm) is the equation of the logistic regression model and this defines the multi-level regression part of MRP:
 
 Equation 1: Logistic regression model
 \begin{equation}
-Pr(Y_i \in \{Trump, Biden\}) = logit^{-1}(\alpha_{j[i]}^{\textrm{age}} + \alpha_{j[i]}^{\textrm{gender}} + \alpha_{j[i]}^{\textrm{edu}} + \alpha_{j[i]}^{\textrm{state}} + \alpha_{j[i]}^{\textrm{race}})
+Pr(Y_i \in \{Trump, Biden\}) = logit^{-1}(\alpha_{a[i]}^{\textrm{age}} + \alpha_{g[i]}^{\textrm{gender}} + \alpha_{e[i]}^{\textrm{edu}} + \alpha_{s[i]}^{\textrm{state}} + \alpha_{r[i]}^{\textrm{race}}) (\#eq:lrm)
 \end{equation}
 
-The Nationscape dataset contains the characteristics of a voter and also their vote, so the model was trained by using cross validation split on that dataset. 95% of the dataset was used as the training set to determine the best weights for the model and the remaining 5% of the dataset was used for the test set to verify the accuracy of the model. The vast majority of the data is used for the training set because we wanted to ensure that the data does not overfit due to lack of data. The logistic regression model was implemented using the BRMS library.
+where $Y_i$ represents the probability a respondent is likely to vote for Trump or Biden given various demographic information and the $\alpha$'s are age, gender, education, state, and race and the notation $\alpha_{a[i]}$ refers to the age group the i-th individual belongs to, $\alpha_{g[i]}$ refers to the gender group the i-th individual belongs to, and so forth.
 
-Furthermore, there were many adjustments that had to be done with the inputs to improve model accuracy. Apart from self-reported income, education was another independent variable that was debated on whether it should be included in the model. Education severely impacted our cross validation accuracy, due to a wide range of values which were too specific for our purpose. These issues were resolved by summarizing all education levels into 2 levels: At least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. 
+The Nationscape dataset contains voter characteristics and their expected vote for the 2020 US Presidential election, so the model was trained using cross-validation on that dataset. 95% of the dataset was used as the training set to determine the best weights for the model and the remaining 5% of the dataset as the test set to verify the accuracy of the model. The vast majority of the data is used for the training set because we wanted to ensure that the data does not overfit due to a small sample size. 
 
-Another variable that initially caused inaccurate results was age. There was no clear trend in having age as a numeric continuous value for predicting votes. As a result, the numerical age values were grouped into 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+); however, that split was not able to capture the pattern in the age groups because the model accuracy worsened. So grouping age by 10's was the adjustment that gave better results and this is the configuration that was included in the model.
+Furthermore, there were many adjustments that had to be done with the inputs to improve model accuracy. Apart from self-reported income, education was another independent variable that we debated whether it should be included in the model. Education severely impacted our cross-validation accuracy due to a wide range of values which were too specific for our purpose. These issues were resolved by summarizing all education levels into two levels: "High School or Less" and "Post Secondary or More". We were able to confirm that there was a significant difference in the voting preference between the two groups, consequently helping our model  perform better.
 
-Overall, our model performs fairly (Figure N), with a cross-validation accuracy of approximately 63% (Figure N). This performed better than 50% (guessing) and through this we are able to gain some insight on how each variable affect the prediction. Furthermore, by investigating our inaccuracies (Figure N), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previously, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College.  
+Another variable that initially caused inaccurate results was age. There was no clear trend in having age as a numeric continuous value for predicting votes. As a result, the numerical age values were grouped into bins of size 10 (eg. 18-28, 29-38) in order to better represent different age groups. Another grouping we tried was splitting the data into youth, middle age, and seniors (18-35, 36-55, 55+); however, that split was not able to capture any significant voting pattern in the age groups because we found that the model accuracy actually worsened. So grouping age by bins of size 10 gave us the best results and is the configuration that was included in the model.
 
-```{r}
-model_education <- readRDS("../../model/4chains_3000iter_.rds")
-reduced_data <- readRDS("../../inputs/training_data.Rda")
-total_rows <- nrow(reduced_data)
-# get updated columns (used for the model)
-reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender,
-                                        race_ethnicity, state)
-set.seed(50)
-#set
-shuffle_indices <- sample(total_rows)
-data <- reduced_data[shuffle_indices,]
-boundary <- as.integer(total_rows*0.95)
-training <- data[0:boundary,]
-testing <- data[boundary:total_rows,]
-#testing the accuracy of the model
-probability <- predict(model_education, type = "response", newdata = testing)
-probability <- if_else(probability[,1] >0.5,1,0)
-testing$probs <- probability
-testing <- testing %>% mutate(acc = probs==vote_biden)
-data.frame(table(testing$acc)) %>% 
-  ggplot(aes(x = Var1, y = Freq/(sum(Freq)))) +
-  geom_bar(stat="identity") +
-  xlab("Correct Prediction") +
-  ylab("Percent") +
-  ggtitle("Cross Validation Scores")
-```
+After finalizing the inputs that went into our model, we implemented the logistic regression model using the BRMS library written in the programming language R. We ran our script using the software RStudio.  We did not run into any diagnostic issues when running our model. As briefly mentioned, we conducted cross-validation to check our model. The results are fittingly covered in the Results section.
 
+## Post-stratification
+As we have previously established, we need to use post-stratification to correct our model estimate of the popular vote because of the discrepancy between the demographic distribution of and the demographics of the American population. We conduct post-stratification by calculating a weighted average of estimates for all combinations of explanatory variables. We found the weights to do so from the ACS dataset. However, we cannot immediately use the ACS distributions as the dataset may not represent American demographics accurately. For example, as we found in our data exploration, there is a discrepancy between the minority distribution found in the ACS dataset and the data reported by the US Census. If minorities tend to democratically and for Biden, we would have a bias against Biden because they are underrepresented in the ACS dataset. 
 
-```{r}
-wrong <- as.numeric(testing$vote_biden) - as.numeric(testing$probs) - 1
-wrong <- plyr::mapvalues(wrong, c(-1,0,1), c("False Positive", 
-                                                   "Correct",
-                                                   "False Negative"))
-data.frame(table(wrong)) %>% 
-  ggplot(aes(x = wrong, y = Freq/sum(Freq)))+
-  geom_bar(stat="identity") +
-  xlab("Prediction Correctness") +
-  ylab("Total")+
-  ggtitle("Cross Validation inaccuracies")
-```
-We cannot directly apply our model on the ACS dataset as the dataset may not represent the American demographics accurately. For example, females tends to respond more to surveys than males, therefore in our dataset we may have 60% females and 40%males, meaning that our vote count with be biased towards females (eg. if females tends to vote Biden, we would have a bias towards Biden). Realistically, males and females should be around 50/50, so post-stratification allows us to adjust these weighting accordingly.
-When we perform post-stratification on ACS, we find all combinations of our variables and find the weight of each combinations representation within USA. Using PERWT variable provided by the ACS, we can calculate how much of the population each combination represents within the United States. As per the UPUMS webpage, "PERWT indicates how many persons in the U.S. population are represented by a given person in an IPUMS sample", meaning we can add all the people within the same combination of variables we are measuring and add their PERWT in order to have an estimate of how much the combination weighs. 
+When we perform post-stratification on the ACS data, we find all combinations of our variables and find the weight of each combination representation within the US. Using the PERWT variable provided by the ACS, we can calculate how much of the population each combination represents within the United States. As per the IMPUMS webpage, "PERWT indicates how many persons in the U.S. population are represented by a given person in an IPUMS sample", meaning we can find all the individuals with the same values for the combination of variables we are measuring and add their PERWT values together to estimate how much these specific values would weigh.
 
-Using MRP provides many benefits. As mentioned, we can more accurately estimate the weight of our sample predictions in relation to the population, therefore we will not be heavily affected by the any bias the survey may have. If the survey does not have any bias, our estimates will not dramatically alter any proportions. It also allows us to use a small sample, and apply it to a much larger sample that better represents the population. In our example, we can use a  small scale election survey from Nationscape and train a model which allows us to predict the election results from the American Community Survey consisting of over 3 million data. Since the ACS dataset does not contain the main information we want (voting), we use Nationscape's survey to predict results. This is crucial, as collecting surveys with a useful sample size with regards to an upcoming election can be extremely expensive and time consuming, as these poll results may be time sensitive. The option to collect from a small sample size allows staticians to save money and time meanwhile providing significant results about the larger population by combining their surveys to general census information. 
+Using MRP provides many benefits. As mentioned, we can more accurately estimate the weight of our sample predictions in relation to the population without being heavily affected by any sampling bias. It also allows us to use a small sample for training, and apply the model to a much larger sample that better represents the population. In our example, we can use a  small scale election survey from Nationscape and train a model which allows us to predict election results for the respondents in the American Community Survey consisting of over 3 million data. This is crucial, as collecting surveys with a useful sample size with regards to an upcoming election can be extremely expensive and time consuming, as these poll results may be time sensitive. The option to collect from a small sample size allows statisticians to save money and time while providing significant results about the larger population by applying their surveys to general census information.  Another noted benefit is computational efficiency. Instead of individually predicting over 3 million people, we summarize all the comparisons and only predict on over 8000 individuals and multiply their proportions, which allows us to compute our predictions significantly faster. 
 
-However, there are also cons to using MRP. For instance, we are limited to only use variables that are common and can be mapped to contain the same Fields in order to work. If one dataset has religion, and the second dataset does not, we are unable to include religion in our model. This can be challenging as information such as an individuals vote in 2016 may be extremely important as a variable, but since the ACS dataset does not contain such information, we are use it to our advantage. Further more, if a variable is broken down to a different granularity, we must group by the common group. For example, if dataset 1 has age grouped in age ranges of 3 and dataset 2 has age grouped in age ranges of 5 (eg. 5-8,9-12 vs 5-10,15-20) then we must map them into ranges that are multiples of 15. We cannot use groups of 3, because we cannot accurately break down groups of 5 into groups of 3. Therefore we lose granularity in situations where it may be desired. Another noted benefit is efficiency when predicting. Instead of inidivually predicting over 3 million people, we summarize all the comparisons and only predict on over 8000 individuals and multiply their proportions, which allows us to compute our predictions significantly faster. 
+However, there are also cons to using MRP. For instance, we are limited to only use variables that will be found in general census data. If we are interested in looking at religion but the post-stratification dataset does not have that field, we are unable to include religion in our model. This can be challenging as information such as an individual's vote in 2016 may be extremely important as a variable, but since the ACS dataset does not contain such information, we are use it to our advantage. Furthermore, if a variable is broken down to a different granularity, we must group by the common group. For example, if dataset 1 has age grouped in bins of size 3 and dataset 2 has age grouped in bins of 5 (eg. 5-8,9-12 vs 5-10,15-20) then we must map them into bins that are multiples of 15. We cannot use groups of 3, because we cannot accurately break down groups of 5 into groups of 3. Therefore we lose granularity in situations where it may be desired.
 
-In this case, using MRP makes sense as we have voting information provided by Nationscape, however this dataset does not contain a large enough sample size to estimate the population. We also have access to the ACS which contains enough data to estimate the population but it does not contain any information on who an individual may vote for in the upcoming election. However analyzing our ACS dataset, we did not notice much biases within our groups. Using MRP allows us to use both datasets in order to predict the overall U.s 2020 election
-
-https://arxiv.org/pdf/1908.06716.pdf
-https://www.sciencedirect.com/science/article/pii/S0261379409001176?casa_token=ec6M6gmXHpMAAAAA:GdXW-ErZjnoZ4GYv_TEPydUAhwppRK0GbPth6kXbSebh8Iz2kmmIMCc1LgczlhByHSMr57NGGmsp
+In this case, using MRP makes sense as we have voting information provided by Nationscape, however this dataset is not distributionally representative of the target population. We also have access to the ACS which contains a lot of distributional data about the American population but it does not contain any information on who an individual will vote for in the upcoming election. Using MRP allows us to use both datasets in order to predict the outcome of the popular vote of the 2020 US presidential election.
 
 
 # Results
+We will graph the relationship between reported 2020 vote and each of the explanatory variables as well as discuss
+the results of our model.
 
 ```{r age_vs_vote, fig.height=4, echo=FALSE}
 # Helper function for graphing the distribution of votes by another variable 
@@ -529,8 +493,57 @@ grouped_bar_chart(grouped, "Education", "Percentage",
 
 ```
 
+```{r}
+table = summary(model_education)
+kable(table)
+```
+Overall, our model performs non-trivially with a cross-validation accuracy of approximately 63% (Figure \@ref(fig:crossval)). This is significantly better than a random guess (which would have an accuracy of 50%). Furthermore, by investigating the source of our inaccuracies (Figure \@ref(fig:results)), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previously, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College.  
+
+```{r crossval, fig.height=4, fig.cap="Cross-validation results", echo=FALSE}
+model_education <- readRDS("../../model/4chains_3000iter_.rds")
+reduced_data <- readRDS("../../inputs/training_data.Rda")
+total_rows <- nrow(reduced_data)
+# get updated columns (used for the model)
+reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender,
+                                        race_ethnicity, state)
+set.seed(50)
+#set
+shuffle_indices <- sample(total_rows)
+data <- reduced_data[shuffle_indices,]
+boundary <- as.integer(total_rows*0.95)
+training <- data[0:boundary,]
+testing <- data[boundary:total_rows,]
+#testing the accuracy of the model
+probability <- predict(model_education, type = "response", newdata = testing)
+probability <- if_else(probability[,1] >0.5,1,0)
+testing$probs <- probability
+testing <- testing %>% mutate(acc = probs==vote_biden)
+
+data.frame(table(testing$acc)) %>% 
+  ggplot(aes(x = Var1, y = Freq/(sum(Freq)))) +
+  geom_bar(stat="identity") +
+  xlab("Prediction") +
+  ylab("Percentage") + 
+  geom_text(aes(label = paste0(round(Freq/(sum(Freq))*100), "%")), 
+            color="white", 
+            position = position_stack(vjust = 0.5))
+```
 
 
+```{r results, fig.height=4, fig.cap="Prediction distribution after cross validation", echo=FALSE}
+wrong <- as.numeric(testing$vote_biden) - as.numeric(testing$probs) - 1
+wrong <- plyr::mapvalues(wrong, c(-1,0,1), c("False Positive", 
+                                                   "Correct",
+                                                   "False Negative"))
+data.frame(table(wrong)) %>% 
+  ggplot(aes(x = wrong, y = Freq/sum(Freq)))+
+  geom_bar(stat="identity") +
+  xlab("Prediction Type") +
+  ylab("Percentage")+ 
+  geom_text(aes(label = paste0(round(Freq/(sum(Freq))*100), "%")), 
+            color="white", 
+            position = position_stack(vjust = 0.5))
+```
 ## Post-stratification
 
 ```{r}
@@ -659,6 +672,9 @@ education_res %>%
 
 For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5% of the votes.
 
+
+
+
 # Discussion
 Figure 1 features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
 
@@ -715,4 +731,4 @@ https://www.politifact.com/factchecks/2014/jan/09/us-census-bureau/americans-mus
 
 https://money.usnews.com/money/retirement/aging/articles/why-older-citizens-are-more-likely-to-vote
 
-Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from [URL].
+Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, June 10-17, 2020 (version 20200814). Retrieved from [URL].
