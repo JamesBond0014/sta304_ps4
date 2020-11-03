@@ -634,9 +634,6 @@ While our model using multilevel regression with post-stratification was able to
 
 
 
-\newpage
-
-# Appendix {-}
 
 \newpage
 
