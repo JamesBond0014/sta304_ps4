@@ -387,7 +387,7 @@ In this case, using MRP makes sense as we have voting information provided by Na
 
 
 # Results
-We will go over our cross validation results, the most significant 
+We will go over our cross validation results, the explanatory variables that have the largest impact on the response variable, and post-stratification predictions.
 
 ```{r crossval, fig.height=4, fig.cap="Cross-validation results", echo=FALSE}
 model_education <- readRDS("../../model/4chains_3000iter_.rds")
@@ -441,6 +441,8 @@ Overall, our model performs non-trivially with a cross-validation accuracy of ap
 ```{r, echo=FALSE}
 summary(model_education)
 ```
+
+
 
 ```{r, echo=FALSE}
 cell_counts <- readRDS("../../inputs/cell_counts.RDS")
