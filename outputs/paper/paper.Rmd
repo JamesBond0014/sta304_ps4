@@ -447,6 +447,7 @@ summary(model_education)
 
 
 ```{r, echo=FALSE}
+#load pre preprocessed items, created through the scripts
 cell_counts <- readRDS("../../inputs/cell_counts.RDS")
 training_data <- readRDS("../../inputs/training_data.RDA")
 model <- readRDS("../../model/4chains_3000iter_.rds")
