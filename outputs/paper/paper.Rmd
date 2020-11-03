@@ -13,6 +13,7 @@ output:
   bookdown::pdf_document2:
 toc: FALSE
 bibliography: references.bib
+link-citations: yes
 ---
 
 ```{r setup, include=FALSE}
