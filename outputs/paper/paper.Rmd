@@ -387,124 +387,7 @@ In this case, using MRP makes sense as we have voting information provided by Na
 
 
 # Results
-We will graph the relationship between reported 2020 vote and each of the explanatory variables as well as discuss
-the results of our model.
-
-```{r age_vs_vote, fig.height=4, echo=FALSE}
-# Helper function for graphing the distribution of votes by another variable 
-grouped_bar_chart <- function(data, xlab, ylab, title){
-  ggplot(data, 
-       aes(y=grouped, x=value, fill=Vote, label=Vote))+
-  geom_bar(stat="identity",position="dodge", width=0.8) +
-  scale_x_continuous(ylab) + 
-  scale_y_discrete(xlab) + 
-  ggtitle(title)
-}
-
-# Restore names for Biden and Trump votes
-reduced_data$vote_2020 <- plyr::mapvalues(reduced_data$vote_biden,
-                                           c(1, 0), 
-                                           c("Joe Biden", "Donald Trump"))
-
-# Graph distribution of votes for each age
-# Data parsing into format I want for chart
-grouped <- reduced_data %>%
-  count(age_group, vote_2020) %>%
-  rename(
-    count=n
-  )
-
-# Total number of votes
-total_vote <- aggregate(grouped$count, 
-                        by=list(age_group=grouped$age_group), FUN=sum)
-
-#process data into desired graphing format
-grouped<-left_join(grouped, total_vote, by="age_group") %>%
-  rename(total=x) %>%
-  mutate(value=count/total) %>%
-  rename(grouped=age_group, Vote=vote_2020)
-
-grouped_bar_chart(grouped, "Age", "Percentage", 
-                  "Figure 1: Distribution of votes by age")
-
-```
-```{r gender_vs_vote, fig.height=4, echo=FALSE}
-# Graph distribution of votes for each gender
-
-# Data parsing into format I want for chart
-grouped <- reduced_data %>%
-  count(gender, vote_2020) %>%
-  rename(
-    count=n
-  )
-
-# Total number of votes
-total_vote <- aggregate(grouped$count, 
-                        by=list(gender=grouped$gender), FUN=sum)
-
-#process data into desired graphing format
-grouped<-left_join(grouped, total_vote, by="gender") %>%
-  rename(total=x) %>%
-  mutate(value=count/total) %>%
-  rename(grouped=gender, Vote=vote_2020)
-
-grouped_bar_chart(grouped, "Gender", "Percentage", 
-                  "Figure 2: Distribution of votes by gender")
-
-```
-```{r race_vs_vote, fig.height=4, echo=FALSE}
-# Graph distribution of votes for each race
-
-# Data parsing into format I want for chart
-grouped <- reduced_data %>%
-  count(race_ethnicity, vote_2020) %>%
-  rename(
-    count=n
-  )
-
-# Total number of votes
-total_vote <- aggregate(grouped$count, 
-                        by=list(race_ethnicity=grouped$race_ethnicity), FUN=sum)
-
-#process data into desired graphing format
-grouped<-left_join(grouped, total_vote, by="race_ethnicity") %>%
-  rename(total=x) %>%
-  mutate(value=count/total) %>%
-  rename(grouped=race_ethnicity, Vote=vote_2020)
-
-grouped_bar_chart(grouped, "Race", "Percentage", 
-                  "Figure 3: Distribution of votes by education level")
-```
-```{r education_vs_vote, fig.height=4, echo=FALSE}
-# Graph distribution of votes for each education level
-
-# Data parsing into format I want for chart
-grouped <- reduced_data %>%
-  count(education, vote_2020) %>%
-  rename(
-    count=n
-  )
-
-# Total number of votes
-total_vote <- aggregate(grouped$count, 
-                        by=list(education=grouped$education), FUN=sum)
-
-#process data into desired graphing format
-grouped<-left_join(grouped, total_vote, by="education") %>%
-  rename(total=x) %>%
-  mutate(value=count/total) %>%
-  rename(grouped=education, Vote=vote_2020)
-
-grouped_bar_chart(grouped, "Education", "Percentage", 
-                  "Figure 4: Distribution of votes by education level")
-
-```
-
-```{r}
-table = summary(model_education)
-kable(table)
-```
-Overall, our model performs non-trivially with a cross-validation accuracy of approximately 63% (Figure \@ref(fig:crossval)). This is significantly better than a random guess (which would have an accuracy of 50%). Furthermore, by investigating the source of our inaccuracies (Figure \@ref(fig:results)), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previously, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College.  
+We will go over our cross validation results, the most significant 
 
 ```{r crossval, fig.height=4, fig.cap="Cross-validation results", echo=FALSE}
 model_education <- readRDS("../../model/4chains_3000iter_.rds")
@@ -551,9 +434,15 @@ data.frame(table(wrong)) %>%
             color="white", 
             position = position_stack(vjust = 0.5))
 ```
-## Post-stratification
 
-```{r}
+Overall, our model performs non-trivially with a cross-validation accuracy of approximately 63% (Figure \@ref(fig:crossval)). This is significantly better than a random guess (which would have an accuracy of 50%). Furthermore, by investigating the source of our inaccuracies (Figure \@ref(fig:results)), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previously, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College.  
+
+
+```{r, echo=FALSE}
+summary(model_education)
+```
+
+```{r, echo=FALSE}
 cell_counts <- readRDS("../../inputs/cell_counts.RDS")
 training_data <- readRDS("../../inputs/training_data.RDA")
 model <- readRDS("../../model/4chains_3000iter_.rds")
