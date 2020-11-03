@@ -356,7 +356,7 @@ Equation 1: Logistic regression model
 Pr(Y_i \in \{Trump, Biden\}) = logit^{-1}(\alpha_{j[i]}^{\textrm{age}} + \alpha_{j[i]}^{\textrm{gender}} + \alpha_{j[i]}^{\textrm{edu}} + \alpha_{j[i]}^{\textrm{state}} + \alpha_{j[i]}^{\textrm{race}})
 \end{equation}
 
-The Nationsacpes dataset contains the characteristics of a voter and also their vote, so the model was trained by using cross validation split on that dataset. 95% of the dataset was used as the training set to determine the best weights for the model and the remaining 5% of the dataset was used for the test set to verify the accuracy of the model. The vast majority of the data is used for the training set because we wanted to ensure that the data does not overfit due to lack of data. The logistic regression model was implemented using the BRMS library.
+The Nationscape dataset contains the characteristics of a voter and also their vote, so the model was trained by using cross validation split on that dataset. 95% of the dataset was used as the training set to determine the best weights for the model and the remaining 5% of the dataset was used for the test set to verify the accuracy of the model. The vast majority of the data is used for the training set because we wanted to ensure that the data does not overfit due to lack of data. The logistic regression model was implemented using the BRMS library.
 
 Furthermore, there were many adjustments that had to be done with the inputs to improve model accuracy. Apart from self-reported income, education was another independent variable that was debated on whether it should be included in the model. Education severely impacted our cross validation accuracy, due to a wide range of values which were too specific for our purpose. These issues were resolved by summarizing all education levels into 2 levels: At least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. 
 
@@ -542,11 +542,7 @@ race_res <- readRDS("../../processed_data/race_res.RDS")
 gender_res <- readRDS("../../processed_data/gender_res.RDS")
 state_res <- readRDS("../../processed_data/state_res.RDS")
 age_res <- readRDS("../../processed_data/age_res.RDS")
-<<<<<<< HEAD
-education_res <- readRDS("../../processed_data/age_res.RDS")
-=======
 education_res <- readRDS("../../processed_data/education_res.RDS")
->>>>>>> 472d2a58c815508dcc08c77abee53308d6f80e97
 
 ```
 
@@ -641,13 +637,10 @@ gender_res %>%
   coord_flip()
 ```
 
-<<<<<<< HEAD
-```{r eval=FALSE}
-=======
+
 ```{r}
 # education_res$age_group <- as.factor(education_res$age_group)
 
->>>>>>> 472d2a58c815508dcc08c77abee53308d6f80e97
 education_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(education), color = "MRP estimate")) + 
   geom_point() +
