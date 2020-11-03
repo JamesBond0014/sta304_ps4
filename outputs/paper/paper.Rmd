@@ -439,10 +439,16 @@ Overall, our model performs non-trivially with a cross-validation accuracy of ap
 
 
 ```{r, echo=FALSE}
-summary(model_education)
+coefficient <- matrix(c(1.40, 0.44, 0.53, 2.26, 1.39, 0.71, 0.07, 2.89, 0.75, 0.34, 0.08, 1.42, 2.38, 0.32, 1.75, 3.01, 
+                        0.92, 0.32, 0.31, 1.54, 0.13, 0.29, -0.42, 0.70, -0.44, 0.06, -0.57, -0.32, -0.27, 0.21, -0.68, 0.13, -0.77, 0.20,-1.17,-0.38, -1.02,0.20,-1.42,-0.64,-0.94,0.21,-1.35,-0.55, -0.83,0.20,-1.25,-0.45, -0.74,0.22,-1.19,-0.32, 0.36,0.07,0.22,0.51), ncol=4, byrow=TRUE)
+colnames(coefficient) <- c("Estimate", "Estimate Error", "l-95% CI", "u-95% CI")
+rownames(coefficient) <- c("race_AsianChinese", "race_AsianJapanese", "race_AsianOther", "race_AfricanAmerican", "race_Someotherrace", "race_ethnicityWhite", "genderMale", "age_group29to38", "age_group39to48", "age_group49to58", "age_group59to68", "age_group69to78", "age_group79andabove", "education_PostSecondaryDegree")
+coefficient <- as.table(coefficient)
+kable(coefficient)
 ```
+Table 6: Coefficients estimates and coefficient intervals given a confidence level of 95%
 
-
+We consider the strength of our variables by looking at the coefficient estimates and how large the interval of the estimate is at a 95% confidence level (we calculate this by subtracting "u-95% CI" which stands for upper 95% confidence interval and "l-95% CI" which stands for lower 95% confidence interval). The output for the states are omitted in the interest of space (and because we noticed that the interval of their estimate is very large at a 95% confidence level is very large with absolute value of ~4 for each state, indicating that the estimate for each state is uncertain and thus state is not a strong predictor of voting). Although all variables listed in Table 6 have a smaller interval that state, a few variables stand out has having especially small confidence intervals. They are gender (interval of only 0.25) and education (interval of only 0.29). This indicates that the model is fairly certain in its estimate of the coefficients for gender and education. Therefore, these two variables likely have the strongest influence on the response variable because there is variability in the possible value of their coefficients at a confidence level of 0.95. Furthermore, the low error of these two variables reemphasizes our conclusion that age and education are the strongest determiners of 2020 voting. The other variables are stronger predictors than state but not as strong as age and education.
 
 ```{r, echo=FALSE}
 cell_counts <- readRDS("../../inputs/cell_counts.RDS")
@@ -457,9 +463,9 @@ education_res <- readRDS("../../processed_data/education_res.RDS")
 
 ```
 
-The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure N shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
+The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure \@ref(fig:raceproportions) shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
 
-```{r raceproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden Votes by race", message=FALSE, echo=FALSE}
+```{r raceproportions, fig.height=4, fig.cap="Proportion of forecasted votes for Biden by race", message=FALSE, echo=FALSE}
 # following graphs are inspired by Monica Alexander 
 # https://github.com/MJAlexander/marriage-name-change/blob/master/mncs_mrp.R
 race_res %>% 
@@ -477,13 +483,13 @@ race_res %>%
              aes(race_ethnicity, prop, color = "ACS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", 
                                            "ACS raw data" = "red")) + 
-  theme_bw(base_size = 14) + coord_flip() +
-  ggtitle("Figure N: Proportion of Forecasted Votes for Biden By Race")
+  theme_bw(base_size = 14) + coord_flip()
 
 ```
-In Figure N show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
 
-```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of Biden Votes by state", message=FALSE, echo=FALSE}
+In Figure \@ref(fig:stateproportions) show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
+
+```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by state", message=FALSE, echo=FALSE}
 
 state_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(state), color = "MRP estimate")) + 
@@ -500,14 +506,12 @@ state_res %>%
              aes(state, prop, color = "ACS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw() +
-  coord_flip() +
-  ggtitle("Figure N: Proportion of Forecasted Votes for Biden By State")
-
-
+  coord_flip()
 ```
 
-Similarly for age, there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden
-```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
+Similarly for age (Figure \@ref(fig:ageproportions)), there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden.
+
+```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by age group.", message=FALSE, echo=FALSE}
 
 age_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(age_group), color = "MRP estimate")) + 
@@ -523,15 +527,14 @@ age_res %>%
              aes(age_group, prop, color = "ACS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw(base_size = 14) +
-  coord_flip() +
-  ggtitle("Figure N: Proportion of Forecasted Votes for Biden By Age group")
+  coord_flip()
 
 ```
 
-Finally in Figures N and N below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
+Finally in Figures \@ref(fig:genderprop) and \@ref(fig:ageproportions) below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
 
 
-```{r}
+```{r genderprop, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by gender.", message=FALSE, echo=FALSE}
 gender_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(gender), color = "MRP estimate")) + 
   geom_point() +
@@ -551,7 +554,7 @@ gender_res %>%
 ```
 
 
-```{r}
+```{r educationprop, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by education.", message=FALSE, echo=FALSE}
 # education_res$age_group <- as.factor(education_res$age_group)
 
 education_res %>% 
@@ -570,9 +573,9 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
-For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes. 
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes \@ref(fig:resultspop). 
 
-```{r}
+```{r resultspop, fig.height=4,fig.width=8, fig.cap="Forecasted popular vote results.", message=FALSE, echo=FALSE}
 
 overall_prop <- readRDS('../../processed_data/predictions.RDS')
 biden <-sum(overall_prop$vote_weight)
@@ -584,15 +587,15 @@ Percentage <- c(biden, trump)
 data.frame(Candidates, Percentage) %>% 
   ggplot(aes(x = Candidates, 
              y= Percentage)) +
-  geom_bar(stat = "identity")
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(round(Percentage*100), "%")),
+            color="white",
+            position = position_stack(vjust = 0.5))
 ```
 
 
-
-
-
 # Discussion
-Figure 1 features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
+Figure \@ref(fig:) features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
 
 Regardless of the reason most young voters support Biden, it’s imperative to realize the repercussions of this. Relative to the 2016 election, young voters are coming out (metaphorically) in droves to vote, be it due to their own stronger opinions, voting drives and increased voting awareness online, or any other facet of their lives. In Texas alone, 1.3 million voters under 30 have already cast their ballot, surpassing the TOTAL number of young votes from 2016 (Texas). This can have huge effects nationally, creating a greater likelihood of a Biden victory. 
 
