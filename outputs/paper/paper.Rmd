@@ -13,6 +13,7 @@ output:
   bookdown::pdf_document2:
 toc: FALSE
 bibliography: references.bib
+nocite: '@*'
 link-citations: yes
 ---
 
@@ -275,7 +276,7 @@ Out of the respondents, approximately 50% were female and 50% were male (hence g
 ### Data collection
 The post-stratification dataset was gathered from the American Community Survey (ACS), a project aiming to mitigate issues stemming from the Census’ 10-year intervals by providing an annualized version of data like that produced by the decennial census long form. The dataset used in this study is specifically that of the 2018 ACS data. The ACS data can be accessed at the IPUMS website. More details on attaining and cleaning data are found in 01-data_cleaning-post-strat.R in the scripts folder of the git repository. TODO
 
-The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
+The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. (@cas2011) Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
 
 Every month, a systemic sample is created for each US county or equivalent, where they are mailed the ACS survey at the start of the month. As of February 2002, the sampling rate of all counties has been 2.5%, except for Houston, Texas, which is sampled at 1% (to reduce cost due to the size of the population). For every site, the sampling is broken into two steps. The first step is sampling 17.5% of the population, which is then subsampled from to achieve the desired 2.5 or 1% of the county. All non-respondents are subsequently contacted by phone for a computer assisted telephone interview one month later. One third of non-respondents that have reached this point are then sampled from to be contacted for a computer assisted personal interview following the previous telephone interview attempt. Beyond this sample (referred to as the National Sample or Supplemental Sample), data was also collected at 31 selected test sites to represent areas with various county population sizes or areas that were difficult to enumerate. The ACS data is weighted in order to ensure reliable and usable estimated regarding the population. 
 
@@ -647,42 +648,3 @@ While our model using multilevel regression with post-stratification was able to
 
 # References
 
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-@tausanovitch_vavreck_2019
-R
-Survey and ACS dataset
-https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-User-Guide_2020sep10.pdf
-https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representativeness-Assessment.pdf
-Wu
-https://www.pewresearch.org/fact-tank/2020/10/26/what-the-2020-electorate-looks-like-by-party-race-and-ethnicity-age-education-and-religion/
-
-Model Stuff:
-https://www150.statcan.gc.ca/n1/pub/75-001-x/2012001/article/11629-eng.htm
-
-ACS stuff:
-https://www2.census.gov/geo/pdfs/education/Uhl_CAS_2011.pdf
-https://www.census.gov/programs-surveys/acs/technical-documentation/errata/120.html
-https://usa.ipums.org/usa/resources/voliii/formACS2018.pdf
-https://usa.ipums.org/usa/resources/codebooks/ACS_codebook.pdf
-https://www.politifact.com/factchecks/2014/jan/09/us-census-bureau/americans-must-answer-us-census-bureau-survey-law-/
-
-https://money.usnews.com/money/retirement/aging/articles/why-older-citizens-are-more-likely-to-vote
-
-Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, June 10-17, 2020 (version 20200814). Retrieved from [URL].
-
-https://www.cnn.com/2020/07/01/politics/donald-trump-black-lives-matter-confederate-race/index.html
-
-https://www.cnbc.com/2020/08/31/trump-suggests-accused-kenosha-killer-kyle-rittenhouse-acted-in-self-defense.html
-
-https://www.nytimes.com/2020/03/23/us/chinese-coronavirus-racist-attacks.html
-
-https://www.cnbc.com/2019/09/11/native-american-voters-could-help-swing-the-2020-presidential-election.html
-
-•	https://www.pewresearch.org/fact-tank/2014/07/09/the-politics-of-american-generations-how-age-affects-attitudes-and-voting-behavior/
-•	https://www.texasobserver.org/young-voters-texas-2020/
-•	https://www.mckinsey.com/featured-insights/employment-and-growth/poorer-than-their-parents-a-new-perspective-on-income-inequality#
-•	https://pubmed.ncbi.nlm.nih.gov/10750310/
-•	https://www.nytimes.com/2016/10/08/us/donald-trump-tape-transcript.html
-•	https://www.bbc.com/news/election-us-2020-54512678
-•	https://cawp.rutgers.edu/sites/default/files/resources/genderdiff.pdf
-https://www.pewsocialtrends.org/essay/the-growing-partisan-divide-in-views-of-higher-education/
