@@ -462,8 +462,10 @@ education_res <- readRDS("../../processed_data/education_res.RDS")
 The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure \@ref(fig:raceproportions) shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
 
 ```{r raceproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden Votes by race", message=FALSE, echo=FALSE}
+
 # following graphs are inspired by Monica Alexander 
 # https://github.com/MJAlexander/marriage-name-change/blob/master/mncs_mrp.R
+
 race_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), 
              color = "MRP estimate")) + 
@@ -479,9 +481,10 @@ race_res %>%
              aes(race_ethnicity, prop, color = "ACS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", 
                                            "ACS raw data" = "red")) + 
-  theme_bw(base_size = 14) + coord_flip() +
+  theme_bw(base_size = 14) + coord_flip()
 
 ```
+
 In Figure \@ref(fig:stateproportions) show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
 
 ```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of Biden Votes by state", message=FALSE, echo=FALSE}
@@ -501,7 +504,7 @@ state_res %>%
              aes(state, prop, color = "ACS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw() +
-  coord_flip() +
+  coord_flip()
 
 ```
 
@@ -522,9 +525,7 @@ age_res %>%
              aes(age_group, prop, color = "ACS raw data")) +
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw(base_size = 14) +
-  coord_flip() +
-  ggtitle("Figure N: Proportion of Forecasted Votes for Biden By Age group")
-
+  coord_flip()
 ```
 
 Finally in Figures \@ref(fig:genderproportions) and \@ref(fig:educationproportions) below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
