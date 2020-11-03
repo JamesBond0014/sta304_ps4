@@ -595,7 +595,7 @@ data.frame(Candidates, Percentage) %>%
 
 
 # Discussion
-Figure \@ref(fig:) features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
+Figure \@ref(fig:ageprop) features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
 
 Regardless of the reason most young voters support Biden, it’s imperative to realize the repercussions of this. Relative to the 2016 election, young voters are coming out (metaphorically) in droves to vote, be it due to their own stronger opinions, voting drives and increased voting awareness online, or any other facet of their lives. In Texas alone, 1.3 million voters under 30 have already cast their ballot, surpassing the TOTAL number of young votes from 2016 (Texas). This can have huge effects nationally, creating a greater likelihood of a Biden victory. 
 
