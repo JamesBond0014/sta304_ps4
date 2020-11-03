@@ -636,12 +636,6 @@ Given that our model is only based on a sample of the population, we can say tha
 
 While our model using multilevel regression with post-stratification was able to provide a election result that resembles many other polling predictions (Biden winning popular vote slightly ahead of Trump), our model had many weaknesses that we would like to address and improve in the future. First and foremost, we only predicted the the votes towards either Biden or Trump, and did not consider the possibilty that people may vote for other candidates or people may not vote in this election. While justified as the vast majority of votes entered will go towards Biden and Trump, it will be insightful to analyze which demographics are likely to not vote for the two main parties, and which demographics are likely to not vote at all (maybe younger people are more apathetics to voting, or certain minorities always vote). There were also many articles we found indicating variables such as religion and family status could play a key indication of how individuals vote, but due to restrictions of the datasets, we did not have the information available. We also originally planned on creating a time series analysis on the Nationscape dataset in order to gain some insight in the data we used to train our model which we would like to include in the future. Furthermore, we would like to further explore various variables and factors of our model, in order to get a more significant accuracy. 
 
-
-
-\newpage
-
-# Appendix {-}
-
 \newpage
 
 # References
