@@ -731,6 +731,8 @@ Figure 4 outlines the difference in voting based on the voter’s level of educa
 
 The difference between those who support Trump and those who support Biden for voters who have attended university is not insignificant, but in relation to those previously discussed, it may seem inconsequential.  That said, it’s still an important finding if not for the fact that based on Figure 8, we can see that the majority of the population has attended university. As the majority of post-secondary attendees support Biden and it’s relatively equal for those who haven’t, this naturally supports a Biden victory.
 
+Given that our model is only based on a sample of the population, we can say that it directly represents the "small world". It's using that sample we can create models, see relationships between variables, and make observations/findings. However, arguably more important, is the representation of the "large world". Using post-stratification, we are able to apply these findings on a much larger scale. The model very well represents many aspects of the real world population. However, it isn't a perfect match, as it only approximates real life. For example, these findings are well and good and in theory should perform well in the "large world", but we can't say for sure that it's a perfect match until we see it in action.
+
 
 
 
