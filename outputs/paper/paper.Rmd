@@ -13,12 +13,11 @@ output:
   bookdown::pdf_document2:
 toc: FALSE
 bibliography: references.bib
+nocite: '@*'
 link-citations: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-
 library(haven)
 library(tidyverse)
 library(knitr)
@@ -274,16 +273,16 @@ Out of the respondents, approximately 50% were female and 50% were male (hence g
 ## Post-stratification dataset
 
 ### Data collection
-The post-stratification dataset was gathered from the American Community Survey (ACS), a project aiming to mitigate issues stemming from the Census’ 10-year intervals by providing an annualized version of data like that produced by the decennial census long form. The dataset used in this study is specifically that of the 2018 ACS data. The ACS data can be accessed at the IPUMS website. More details on attaining and cleaning data are found in 01-data_cleaning-post-strat.R in the scripts folder of the git repository. 
+The post-stratification dataset was gathered from the American Community Survey (ACS), a project aiming to mitigate issues stemming from the Census’ 10-year intervals by providing an annualized version of data like that produced by the decennial census long form. The dataset used in this study is specifically that of the 2018 ACS data. The ACS data can be accessed at the IPUMS website. More details on attaining and cleaning data are found in 01-data_cleaning-post-strat.R in the scripts folder of the git repository. TODO
 
-The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
+The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. (@cas2011) Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
 
 Every month, a systemic sample is created for each US county or equivalent, where they are mailed the ACS survey at the start of the month. As of February 2002, the sampling rate of all counties has been 2.5%, except for Houston, Texas, which is sampled at 1% (to reduce cost due to the size of the population). For every site, the sampling is broken into two steps. The first step is sampling 17.5% of the population, which is then subsampled from to achieve the desired 2.5 or 1% of the county. All non-respondents are subsequently contacted by phone for a computer assisted telephone interview one month later. One third of non-respondents that have reached this point are then sampled from to be contacted for a computer assisted personal interview following the previous telephone interview attempt. Beyond this sample (referred to as the National Sample or Supplemental Sample), data was also collected at 31 selected test sites to represent areas with various county population sizes or areas that were difficult to enumerate. The ACS data is weighted in order to ensure reliable and usable estimated regarding the population. 
 
 ### Data features and visualization 
 The ACS Questionnaire asks questions regarding every inhabitant in the residence it is sent to. However, the most information is required of “Person 1”, the person whose name the residence is owned in, being bought in, or rented in (or any adult, if none of those labels apply). The ACS questionnaire is extremely like that of the US Census Questionnaire, given that it’s meant to be a substitution for it. It was developed after the Census Bureau was provided with various subjects that other federal agencies justified as important, categorizing each subject as “mandatory”, “required”, or “programmatic”, from which the ACS collected data for both the “mandatory” and “required” subjects. This approach illustrates itself in the questionnaire, as every question is answered by an objective fact, whether it’s a checkbox, a number, or a short answer (such as the person’s major). This allows little ambiguity in how the question must be answered, and makes each response fairly easy, which is a major strength of the questionnaire. However, depending on the number of people in the residence, the survey can be on the longer side (up to 11 pages). Combined with the fact that it is legally mandated that the response is filled out, with a potential fine of up to $5000, respondents may feel the need to rush through or give a fake response to questions they may not know immediately (such as when the residence was built). In addition, in the case that there is not one single person responsible for the residence, like in the case where multiple people are renting a room from one landlord who doesn’t live at the residence, then the data of those who are not “Person 1” is not collected, despite the fact that they are on the same standing in the eyes of the survey. However, no one has been prosecuted for not filling out the survey since 1970 and the case outlined in the second point is relatively rare in the total population, so these weaknesses are fairly minor in the grand scheme of things. 
 
-As mentioned above, the variables we used were age (the age of the respondent), gender (what gender they identified as), race/ethnicity of the respondent, state (the state they lived in), and education (what their highest level of education was). We did not find any variables that were similar enough to the ones chosen. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. One more thing of importance is that we chose not to include data for those aged 88 and above, as their data interfered with the model and their contribution overall is not very significant. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.
+As mentioned above, the variables we used were age (the age of the respondent), gender (what gender they identified as), race/ethnicity of the respondent, state (the state they lived in), and education (what their highest level of education was). We did not find any variables that were similar enough to the ones chosen. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.  TODO
 
 ```{r poststratage, fig.height=4, fig.cap="Distribution of the age of ACS respondents in percentages", echo=FALSE}
 cleaned_data <- labelled::to_factor(cleaned_data)
@@ -440,13 +439,18 @@ Overall, our model performs non-trivially with a cross-validation accuracy of ap
 
 
 ```{r, echo=FALSE}
-summary(model_education)
+coefficient <- matrix(c(1.40, 0.44, 0.53, 2.26, 1.39, 0.71, 0.07, 2.89, 0.75, 0.34, 0.08, 1.42, 2.38, 0.32, 1.75, 3.01, 
+                        0.92, 0.32, 0.31, 1.54, 0.13, 0.29, -0.42, 0.70, -0.44, 0.06, -0.57, -0.32, -0.27, 0.21, -0.68, 0.13, -0.77, 0.20,-1.17,-0.38, -1.02,0.20,-1.42,-0.64,-0.94,0.21,-1.35,-0.55, -0.83,0.20,-1.25,-0.45, -0.74,0.22,-1.19,-0.32, 0.36,0.07,0.22,0.51), ncol=4, byrow=TRUE)
+colnames(coefficient) <- c("Estimate", "Estimate Error", "l-95% CI", "u-95% CI")
+rownames(coefficient) <- c("race_AsianChinese", "race_AsianJapanese", "race_AsianOther", "race_AfricanAmerican", "race_Someotherrace", "race_ethnicityWhite", "genderMale", "age_group29to38", "age_group39to48", "age_group49to58", "age_group59to68", "age_group69to78", "age_group79andabove", "education_PostSecondaryDegree")
+coefficient <- as.table(coefficient)
+kable(coefficient)
 ```
+Table 6: Coefficients estimates and coefficient intervals given a confidence level of 95%
 
-
+We consider the strength of our variables by looking at the coefficient estimates and how large the interval of the estimate is at a 95% confidence level (we calculate this by subtracting "u-95% CI" which stands for upper 95% confidence interval and "l-95% CI" which stands for lower 95% confidence interval). The output for the states are omitted in the interest of space (and because we noticed that the interval of their estimate is very large at a 95% confidence level is very large with absolute value of ~4 for each state, indicating that the estimate for each state is uncertain and thus state is not a strong predictor of voting). Although all variables listed in Table 6 have a smaller interval that state, a few variables stand out has having especially small confidence intervals. They are gender (interval of only 0.25) and education (interval of only 0.29). This indicates that the model is fairly certain in its estimate of the coefficients for gender and education. Therefore, these two variables likely have the strongest influence on the response variable because there is variability in the possible value of their coefficients at a confidence level of 0.95. Furthermore, the low error of these two variables reemphasizes our conclusion that age and education are the strongest determiners of 2020 voting. The other variables are stronger predictors than state but not as strong as age and education.
 
 ```{r, echo=FALSE}
-#load pre preprocessed items, created through the scripts
 cell_counts <- readRDS("../../inputs/cell_counts.RDS")
 training_data <- readRDS("../../inputs/training_data.RDA")
 model <- readRDS("../../model/4chains_3000iter_.rds")
@@ -461,11 +465,9 @@ education_res <- readRDS("../../processed_data/education_res.RDS")
 
 The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure \@ref(fig:raceproportions) shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
 
-```{r raceproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden Votes by race", message=FALSE, echo=FALSE}
-
+```{r raceproportions, fig.height=4, fig.cap="Proportion of forecasted votes for Biden by race", message=FALSE, echo=FALSE}
 # following graphs are inspired by Monica Alexander 
 # https://github.com/MJAlexander/marriage-name-change/blob/master/mncs_mrp.R
-
 race_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), 
              color = "MRP estimate")) + 
@@ -487,7 +489,7 @@ race_res %>%
 
 In Figure \@ref(fig:stateproportions) show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
 
-```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of Biden Votes by state", message=FALSE, echo=FALSE}
+```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by state", message=FALSE, echo=FALSE}
 
 state_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(state), color = "MRP estimate")) + 
@@ -505,11 +507,11 @@ state_res %>%
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw() +
   coord_flip()
-
 ```
 
-Similarly for age, there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden (Figure \@ref(fig:ageproportions))
-```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
+Similarly for age (Figure \@ref(fig:ageproportions)), there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden.
+
+```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by age group.", message=FALSE, echo=FALSE}
 
 age_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(age_group), color = "MRP estimate")) + 
@@ -526,12 +528,13 @@ age_res %>%
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw(base_size = 14) +
   coord_flip()
+
 ```
 
-Finally in Figures \@ref(fig:genderproportions) and \@ref(fig:educationproportions) below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
+Finally in Figures \@ref(fig:genderprop) and \@ref(fig:ageproportions) below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
 
 
-```{r genderproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
+```{r genderprop, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by gender.", message=FALSE, echo=FALSE}
 gender_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(gender), color = "MRP estimate")) + 
   geom_point() +
@@ -551,7 +554,7 @@ gender_res %>%
 ```
 
 
-```{r educationproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
+```{r educationprop, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by education.", message=FALSE, echo=FALSE}
 # education_res$age_group <- as.factor(education_res$age_group)
 
 education_res %>% 
@@ -570,9 +573,9 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
-For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes. 
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes \@ref(fig:resultspop). 
 
-```{r}
+```{r resultspop, fig.height=4,fig.width=8, fig.cap="Forecasted popular vote results.", message=FALSE, echo=FALSE}
 
 overall_prop <- readRDS('../../processed_data/predictions.RDS')
 biden <-sum(overall_prop$vote_weight)
@@ -584,11 +587,15 @@ Percentage <- c(biden, trump)
 data.frame(Candidates, Percentage) %>% 
   ggplot(aes(x = Candidates, 
              y= Percentage)) +
-  geom_bar(stat = "identity")
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(round(Percentage*100), "%")),
+            color="white",
+            position = position_stack(vjust = 0.5))
 ```
 
+
 # Discussion
-Figure 1 features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
+Figure \@ref(fig:ageprop) features the trend of the younger voters (between the ages of 18 and 38) to vote left-wing. There are many different reasons this can be the case. Younger people generally tend to be left wing (pew 1). In addition, given the current state of the economy, combined with the fact that in general millennials and Gen-Xers are poorer than their parents, many younger voters are in disillusion with the current government, leading to vote against the Republican Party (mckinsey). 
 
 Regardless of the reason most young voters support Biden, it’s imperative to realize the repercussions of this. Relative to the 2016 election, young voters are coming out (metaphorically) in droves to vote, be it due to their own stronger opinions, voting drives and increased voting awareness online, or any other facet of their lives. In Texas alone, 1.3 million voters under 30 have already cast their ballot, surpassing the TOTAL number of young votes from 2016 (Texas). This can have huge effects nationally, creating a greater likelihood of a Biden victory. 
 
@@ -602,13 +609,19 @@ The first is the way that Trump has treated women in the past, a notable example
 
 Overall, while there in majority men vote support Trump, a greater percentage of women support Biden. In conjunction with the metric that women vote more than man, this finding supports a Biden victory. (gender diff)
 
-## Race
 
-As discussed in the results, race can play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or  African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian American's live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support Biden more to various degrees.
+
+As discussed in the results, race can also play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. 
+
+Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian Americans live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support Biden more to various degrees.
 
 In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
 
-## Education
+## Race
+
+As discussed in the results, race can play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or  African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian American's live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support biden more to various degrees.
+
+In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
 
 Figure 4 outlines the difference in voting based on the voter’s level of education. The first thing of note is that there is a slight majority for Trump for those who have not attended university. However, the difference is so small that it’s essentially equal from a top down perspective. In comparison, those who have attended university tend to support Biden. There are a few reasons this could be the case. One is the notion that universities “make” people more left-wing. Whether or not this is truly the case, and if so for what reason, aside, this is a commonly held belief. However, this may not be the sole reason why such a divide exists. In recent years, conservatives have majorly considered higher education to have a negative effect on the country. (pewsocial) Inferring from this, conservatives are thus less likely to attend university or view university with a particularly positive perspective than their left-wing counterparts. 
 
@@ -616,23 +629,19 @@ The difference between those who support Trump and those who support Biden for v
 
 Given that our model is only based on a sample of the population, we can say that it directly represents the "small world". It's using that sample we can create models, see relationships between variables, and make observations/findings. However, arguably more important, is the representation of the "large world". Using post-stratification, we are able to apply these findings on a much larger scale. The model very well represents many aspects of the real world population. However, it isn't a perfect match, as it only approximates real life. For example, these findings are well and good and in theory should perform well in the "large world", but we can't say for sure that it's a perfect match until we see it in action.
 
-## States
 
-Overall, as shown in results, the states are mostly split between Trump and Biden. Certain states such as Vermont and Arizona heavily favour Biden and Trump respectively. Many of the states that are currently split will be a major focus for the presidential candidates as gaining these votes can be crucial to winning the election. As such these states will likely have received a lot of attention in the past few weeks.
-
-
-If we had the ability to allocate a greater budget to polling companies, we assuredly could achieve a better estimate. The key improvement would be to ask more people and ask more questions, such as religion. With a greater number of questions we could subsequently create more cells to work with, and with increasing the range of respondents stratification can occur.
 
 
 ## Weaknesses and next steps
 
-While our model using multilevel regression with post-stratification was able to provide a election result that resembles many other polling predictions (Biden winning popular vote slightly ahead of Trump), our model had many weaknesses that we would like to address and improve in the future. First and foremost, we only predicted the the votes towards either Biden or Trump, and did not consider the possibilty that people may vote for other candidates or people may not vote in this election. While justified as the vast majority of votes entered will go towards Biden and Trump, it will be insightful to analyze which demographics are likely to not vote for the two main parties, and which demographics are likely to not vote at all (maybe younger people are more apathetic to voting, or certain minorities always vote). There were also many articles we found indicating variables such as religion and family status could play a key indication of how individuals vote, but due to restrictions of the datasets, we did not have the information available. We also originally planned on creating a time series analysis on the Nationscape dataset in order to gain some insight in the data we used to train our model which we would like to include in the future. Furthermore, we would like to further explore various variables and factors of our model, in order to get a more significant accuracy. 
-
+While our model using multilevel regression with post-stratification was able to provide a election result that resembles many other polling predictions (Biden winning popular vote slightly ahead of Trump), our model had many weaknesses that we would like to address and improve in the future. First and foremost, we only predicted the the votes towards either Biden or Trump, and did not consider the possibilty that people may vote for other candidates or people may not vote in this election. While justified as the vast majority of votes entered will go towards Biden and Trump, it will be insightful to analyze which demographics are likely to not vote for the two main parties, and which demographics are likely to not vote at all (maybe younger people are more apathetics to voting, or certain minorities always vote). There were also many articles we found indicating variables such as religion and family status could play a key indication of how individuals vote, but due to restrictions of the datasets, we did not have the information available. We also originally planned on creating a time series analysis on the Nationscape dataset in order to gain some insight in the data we used to train our model which we would like to include in the future. Furthermore, we would like to further explore various variables and factors of our model, in order to get a more significant accuracy. 
 
 
 
 \newpage
 
+# Appendix {-}
 
+\newpage
 
 # References
