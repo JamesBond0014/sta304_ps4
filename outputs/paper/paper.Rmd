@@ -13,6 +13,7 @@ output:
   bookdown::pdf_document2:
 toc: FALSE
 bibliography: references.bib
+nocite: '@*'
 link-citations: yes
 ---
 
@@ -20,7 +21,6 @@ link-citations: yes
 library(haven)
 library(tidyverse)
 library(knitr)
-library(palmerpenguins)
 ```
 ```{r loading, echo=FALSE}
 # Load required data and models
@@ -275,7 +275,7 @@ Out of the respondents, approximately 50% were female and 50% were male (hence g
 ### Data collection
 The post-stratification dataset was gathered from the American Community Survey (ACS), a project aiming to mitigate issues stemming from the Census’ 10-year intervals by providing an annualized version of data like that produced by the decennial census long form. The dataset used in this study is specifically that of the 2018 ACS data. The ACS data can be accessed at the IPUMS website. More details on attaining and cleaning data are found in 01-data_cleaning-post-strat.R in the scripts folder of the git repository. TODO
 
-The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
+The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. (@cas2011) Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
 
 Every month, a systemic sample is created for each US county or equivalent, where they are mailed the ACS survey at the start of the month. As of February 2002, the sampling rate of all counties has been 2.5%, except for Houston, Texas, which is sampled at 1% (to reduce cost due to the size of the population). For every site, the sampling is broken into two steps. The first step is sampling 17.5% of the population, which is then subsampled from to achieve the desired 2.5 or 1% of the county. All non-respondents are subsequently contacted by phone for a computer assisted telephone interview one month later. One third of non-respondents that have reached this point are then sampled from to be contacted for a computer assisted personal interview following the previous telephone interview attempt. Beyond this sample (referred to as the National Sample or Supplemental Sample), data was also collected at 31 selected test sites to represent areas with various county population sizes or areas that were difficult to enumerate. The ACS data is weighted in order to ensure reliable and usable estimated regarding the population. 
 
@@ -610,13 +610,6 @@ The first is the way that Trump has treated women in the past, a notable example
 Overall, while there in majority men vote support Trump, a greater percentage of women support Biden. In conjunction with the metric that women vote more than man, this finding supports a Biden victory. (gender diff)
 
 
-
-As discussed in the results, race can also play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. 
-
-Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian Americans live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support Biden more to various degrees.
-
-In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
-
 ## Race
 
 As discussed in the results, race can play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or  African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian American's live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support biden more to various degrees.
@@ -636,53 +629,6 @@ Given that our model is only based on a sample of the population, we can say tha
 
 While our model using multilevel regression with post-stratification was able to provide a election result that resembles many other polling predictions (Biden winning popular vote slightly ahead of Trump), our model had many weaknesses that we would like to address and improve in the future. First and foremost, we only predicted the the votes towards either Biden or Trump, and did not consider the possibilty that people may vote for other candidates or people may not vote in this election. While justified as the vast majority of votes entered will go towards Biden and Trump, it will be insightful to analyze which demographics are likely to not vote for the two main parties, and which demographics are likely to not vote at all (maybe younger people are more apathetics to voting, or certain minorities always vote). There were also many articles we found indicating variables such as religion and family status could play a key indication of how individuals vote, but due to restrictions of the datasets, we did not have the information available. We also originally planned on creating a time series analysis on the Nationscape dataset in order to gain some insight in the data we used to train our model which we would like to include in the future. Furthermore, we would like to further explore various variables and factors of our model, in order to get a more significant accuracy. 
 
-
-
 \newpage
-
-# Appendix {-}
-
-\newpage
-
 
 # References
-
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-@tausanovitch_vavreck_2019
-R
-Survey and ACS dataset
-https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-User-Guide_2020sep10.pdf
-https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representativeness-Assessment.pdf
-Wu
-https://www.pewresearch.org/fact-tank/2020/10/26/what-the-2020-electorate-looks-like-by-party-race-and-ethnicity-age-education-and-religion/
-
-Model Stuff:
-https://www150.statcan.gc.ca/n1/pub/75-001-x/2012001/article/11629-eng.htm
-
-ACS stuff:
-https://www2.census.gov/geo/pdfs/education/Uhl_CAS_2011.pdf
-https://www.census.gov/programs-surveys/acs/technical-documentation/errata/120.html
-https://usa.ipums.org/usa/resources/voliii/formACS2018.pdf
-https://usa.ipums.org/usa/resources/codebooks/ACS_codebook.pdf
-https://www.politifact.com/factchecks/2014/jan/09/us-census-bureau/americans-must-answer-us-census-bureau-survey-law-/
-
-https://money.usnews.com/money/retirement/aging/articles/why-older-citizens-are-more-likely-to-vote
-
-Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, June 10-17, 2020 (version 20200814). Retrieved from [URL].
-
-https://www.cnn.com/2020/07/01/politics/donald-trump-black-lives-matter-confederate-race/index.html
-
-https://www.cnbc.com/2020/08/31/trump-suggests-accused-kenosha-killer-kyle-rittenhouse-acted-in-self-defense.html
-
-https://www.nytimes.com/2020/03/23/us/chinese-coronavirus-racist-attacks.html
-
-https://www.cnbc.com/2019/09/11/native-american-voters-could-help-swing-the-2020-presidential-election.html
-
-•	https://www.pewresearch.org/fact-tank/2014/07/09/the-politics-of-american-generations-how-age-affects-attitudes-and-voting-behavior/
-•	https://www.texasobserver.org/young-voters-texas-2020/
-•	https://www.mckinsey.com/featured-insights/employment-and-growth/poorer-than-their-parents-a-new-perspective-on-income-inequality#
-•	https://pubmed.ncbi.nlm.nih.gov/10750310/
-•	https://www.nytimes.com/2016/10/08/us/donald-trump-tape-transcript.html
-•	https://www.bbc.com/news/election-us-2020-54512678
-•	https://cawp.rutgers.edu/sites/default/files/resources/genderdiff.pdf
-https://www.pewsocialtrends.org/essay/the-growing-partisan-divide-in-views-of-higher-education/
