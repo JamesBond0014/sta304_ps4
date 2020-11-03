@@ -648,3 +648,42 @@ While our model using multilevel regression with post-stratification was able to
 
 # References
 
+Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
+@tausanovitch_vavreck_2019
+R
+Survey and ACS dataset
+https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-User-Guide_2020sep10.pdf
+https://www.voterstudygroup.org/uploads/reports/Data/NS-Methodology-Representativeness-Assessment.pdf
+Wu
+https://www.pewresearch.org/fact-tank/2020/10/26/what-the-2020-electorate-looks-like-by-party-race-and-ethnicity-age-education-and-religion/
+
+Model Stuff:
+https://www150.statcan.gc.ca/n1/pub/75-001-x/2012001/article/11629-eng.htm
+
+ACS stuff:
+https://www2.census.gov/geo/pdfs/education/Uhl_CAS_2011.pdf
+https://www.census.gov/programs-surveys/acs/technical-documentation/errata/120.html
+https://usa.ipums.org/usa/resources/voliii/formACS2018.pdf
+https://usa.ipums.org/usa/resources/codebooks/ACS_codebook.pdf
+https://www.politifact.com/factchecks/2014/jan/09/us-census-bureau/americans-must-answer-us-census-bureau-survey-law-/
+
+https://money.usnews.com/money/retirement/aging/articles/why-older-citizens-are-more-likely-to-vote
+
+Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, June 10-17, 2020 (version 20200814). Retrieved from [URL].
+
+https://www.cnn.com/2020/07/01/politics/donald-trump-black-lives-matter-confederate-race/index.html
+
+https://www.cnbc.com/2020/08/31/trump-suggests-accused-kenosha-killer-kyle-rittenhouse-acted-in-self-defense.html
+
+https://www.nytimes.com/2020/03/23/us/chinese-coronavirus-racist-attacks.html
+
+https://www.cnbc.com/2019/09/11/native-american-voters-could-help-swing-the-2020-presidential-election.html
+
+•	https://www.pewresearch.org/fact-tank/2014/07/09/the-politics-of-american-generations-how-age-affects-attitudes-and-voting-behavior/
+•	https://www.texasobserver.org/young-voters-texas-2020/
+•	https://www.mckinsey.com/featured-insights/employment-and-growth/poorer-than-their-parents-a-new-perspective-on-income-inequality#
+•	https://pubmed.ncbi.nlm.nih.gov/10750310/
+•	https://www.nytimes.com/2016/10/08/us/donald-trump-tape-transcript.html
+•	https://www.bbc.com/news/election-us-2020-54512678
+•	https://cawp.rutgers.edu/sites/default/files/resources/genderdiff.pdf
+https://www.pewsocialtrends.org/essay/the-growing-partisan-divide-in-views-of-higher-education/
