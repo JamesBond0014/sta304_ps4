@@ -460,6 +460,8 @@ education_res <- readRDS("../../processed_data/education_res.RDS")
 The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure N shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
 
 ```{r raceproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden Votes by race", message=FALSE, echo=FALSE}
+# following graphs are inspired by Monica Alexander 
+# https://github.com/MJAlexander/marriage-name-change/blob/master/mncs_mrp.R
 race_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), 
              color = "MRP estimate")) + 
