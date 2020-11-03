@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.6.2)  2 NOV 2020 23:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.6.2)  2 NOV 2020 23:17
 entering extended mode
 **./paper.tex
 (paper.tex
@@ -1144,38 +1144,37 @@ n input line 613.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [20 <./paper_files/figure-latex/ageproportions-1.pdf> <./paper_files/figure-lat
 ex/genderproportions-1.pdf>] [21 <./paper_files/figure-latex/educationproportio
-ns-1.pdf> <./paper_files/figure-latex/unnamed-chunk-9-1.pdf>] [22] [23] [24] [2
-5]
-Overfull \hbox (0.13643pt too wide) in paragraph at lines 681--687
+ns-1.pdf> <./paper_files/figure-latex/unnamed-chunk-9-1.pdf>] [22] [23] [24]
+Overfull \hbox (0.13643pt too wide) in paragraph at lines 673--679
 []$\T1/lmr/m/n/10 (+12) h t t p s : / / w w w . p o l i t i f a c t . c o m / f
  a c t c h e c k s / 2 0 1 4 / j a n / 0 9 / us -[] c e n s us -[] b u r e a u 
 / a m e r i c a ns -[] m u st -[] a n s w er -[] us -[] c e n s us -[]
  []
 
 
-Overfull \hbox (0.22801pt too wide) in paragraph at lines 694--695
+Overfull \hbox (0.22801pt too wide) in paragraph at lines 686--687
 [][]$\T1/lmr/m/n/10 (+12) h t t p s : / / w w w . c n b c . c o m / 2 0 2 0 / 0
  8 / 3 1 / t r u m p -[] s u g g e s ts -[] a c c u s e d -[] k e n o s h a -[]
  k i l l er -[] k y le -[] r i t t e n h o u s e -[] a c t e d -[] in -[] s e l
 f -[]
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 716.
-[26]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 716.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 705.
+[25]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 705.
 (paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 716.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 716.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 705.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 705.
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 716.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 705.
  ) 
 Here is how much of TeX's memory you used:
- 13819 strings out of 493305
- 199749 string characters out of 3141035
- 330266 words of memory out of 3000000
- 16957 multiletter control sequences out of 15000+200000
+ 13813 strings out of 493305
+ 199699 string characters out of 3141035
+ 328231 words of memory out of 3000000
+ 16955 multiletter control sequences out of 15000+200000
  82145 words of font info for 125 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  40i,6n,38p,2812b,460s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1194,9 +1193,9 @@ pe1/public/lm/lmr8.pfb><D:/Programs/MikTeX 2.9/fonts/type1/public/lm/lmr9.pfb><
 D:/Programs/MikTeX 2.9/fonts/type1/public/lm/lmri10.pfb><D:/Programs/MikTeX 2.9
 /fonts/type1/public/lm/lmsy10.pfb><D:/Programs/MikTeX 2.9/fonts/type1/public/lm
 /lmsy7.pfb><D:/Programs/MikTeX 2.9/fonts/type1/public/lm/lmtt10.pfb>
-Output written on paper.pdf (26 pages, 509209 bytes).
+Output written on paper.pdf (25 pages, 505580 bytes).
 PDF statistics:
- 494 PDF objects out of 1000 (max. 8388607)
- 85 named destinations out of 1000 (max. 500000)
- 16627 words of extra memory for PDF output out of 17280 (max. 10000000)
+ 481 PDF objects out of 1000 (max. 8388607)
+ 81 named destinations out of 1000 (max. 500000)
+ 16619 words of extra memory for PDF output out of 17280 (max. 10000000)
 
