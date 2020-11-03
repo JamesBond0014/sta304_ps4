@@ -13,6 +13,7 @@ output:
   bookdown::pdf_document2:
 toc: FALSE
 bibliography: references.bib
+link-citations: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -27,6 +28,12 @@ cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
 ```
 
 # Introduction
+
+The whole world has eyes on the US 2020 Election, with an intense race between Joe Biden and Donald Trump, the question in everyone minds is who will win. Polls are consistently being updated, attempting to reflect the newest results, as candidates attempts to sway various groups in USA in order to gain more votes. By choosing 5 explanatory variables composed of: age (by groups of 10 years), gender, state, race and education we fit an logistic regression model with multilevel regression with post-stratification in order to predict the outcome of this highly anticipated election. 
+
+Throughout our analysis, we found relationships between various demographic information and a persons liklihood to vote for either Trump or Biden, we analyzed the significance of our model, and the importance of using multilevel regression with post-stratification. We found that we were able to make predictions with approximately 63% accuracy, and only certain values within our variables are strong indicators of a person's forecasted vote. For examples, 90% of the Vermont population is projected to vote for Joe Biden, and approximately 90% of Black or African Americans are likely to vote for Biden. However, not many variables provided strong support for Donald Trump, noticeably 70% of the state of Arizona is likely to vote for Trump. However, individually, many of our variables are close to 50% and do not provide a strong indication on an individuals voting intention. 
+
+This paper discusses the 2 datasets we used, how they were collect and key highlights of tehse datasets, followed by visualizations, explanations of our results, and how we used multilevel regression with post-stratification to build a logistic regression model with a small dataset from Nationscape in order to predict the voting results on a much larger dataset provided by American Community Survey which can represent the population. 
 
 # Data
 To train our model to predict the outcome of the 2020 US presidential election, we used Wave 49 of the Nationscape Dataset (results from the week of June 18-24, 2020). We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Individual-level survey dataset."
@@ -345,7 +352,7 @@ Due to the nature of our methodology, we are able to directly compare and contra
 There is a major difference in education distribution across surveys as shown in Figure \@ref(fig:poststratedu) where only 53% of respondents had some level of post secondary education compared to 71% in Figure \@ref(fig:educationdist). This better matches the data reported in the US, indicating that the true level of post secondary education is much lower than represented in the Nationscape survey (Figure \@ref(fig:educationdist)). Lastly, the state distribution looks proportional to the American population (Figure \@ref(fig:poststratstate)) after conducting the same sanity check as before. The discrepancy between the Nationscape survey data and the post-stratification data with regards to age as well as education indicates how important it is that we are using multi-level regression model with post-stratification to predict the popular vote. 
 
 # Model
-The purpose of our model is to predict a person's vote in the 2020 US election given their demographic characteristics. The dependent variable is a binary categorical variable, where 0 represents voting for Trump and 1 represents voting for Biden. The independent variables are the characteristics of the person (age, gender, race, state, and education). To avoid multicollinearity (when there is a relationship between the independent variables) which causes unreliable regression estimates, a few carefully selected independent variables were used for our model. One criteria for the selection was that the variables had to be both present in the Nationscapes dataset and the ACS dataset, so that they be included in post-stratification. Another criteria is that the characteristic should group people that share a similar perspective which may impact on their voting decision. Through literature research (Uppal and LaRochelle-Cote, 2015), we found that some helpful indicators were age, gender, race, state, education, and self-reported income. To finalize the selection, characteristics should not be highly correlated and the data provided should make logical sense. Since the data quality for income was generally poor and it worsened the model performance, income was ultimately excluded from the model. Therefore, the predictors used for the model are age, gender, race, state, and education.
+The purpose of our model is to predict a person's vote in the 2020 US election given their demographic characteristics. The dependent variable is a binary categorical variable, where 0 represents voting for Trump and 1 represents voting for Biden. The independent variables are the characteristics of the person (age, gender, race, state, and education). To avoid multicollinearity (when there is a relationship between the independent variables) which causes unreliable regression estimates, a few carefully selected independent variables were used for our model. One criteria for the selection was that the variables had to be both present in the Nationscapes dataset and the ACS dataset, so that they be included in post-stratification. Another criteria is that the characteristic should group people that share a similar perspective which may impact on their voting decision. Through literature research (@statscan), we found that some helpful indicators were age, gender, race, state, education, and self-reported income. To finalize the selection, characteristics should not be highly correlated and the data provided should make logical sense. Since the data quality for income was generally poor and it worsened the model performance, income was ultimately excluded from the model. Therefore, the predictors used for the model are age, gender, race, state, and education.
 
 We found when exploring and graphing the data in the section above that the survey data has underrepresented or overrepresented certain characteristics compared to the actual distributions in the population (namely younger individuals were underrepresented and individuals with higher education were overrepresented in the Nationscape survey data). Therefore, if we were to predict the outcome of the popular vote using the demographic proportions found in the Nationscape survey, we would find that the prediction is biased because the survey sample is not representative of the American population. Hence, we use multi-level regression with post-stratification (MRP) to adjust the influence of each subgroup of the respondents to get a better match on the actual population distribution. To do this, a multi-level model is required as well as another resource (ACS dataset in our case) for post-stratification.
 
@@ -670,7 +677,23 @@ education_res %>%
   theme_bw(base_size = 14) 
 ```
 
-For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 53.5% to 46.5% of the votes.
+For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes. 
+
+```{r}
+
+overall_prop <- readRDS('../../processed_data/predictions.RDS')
+biden <-sum(overall_prop$vote_weight)
+trump <- 1 - biden
+
+Candidates <- c("Biden", "Trump")
+Percentage <- c(biden, trump)
+
+data.frame(Candidates, Percentage) %>% 
+  ggplot(aes(x = Candidates, 
+             y= Percentage)) +
+  geom_bar(stat = "identity")
+```
+
 
 
 
@@ -682,10 +705,7 @@ Regardless of the reason most young voters support Biden, it’s imperative to r
 
 Contrasting this are the older populations. The majority of voters ages 49 and above support Trump. However, a key point of note is that the difference between Biden support and Trump support is much lower than with younger voters. Given this, there’s not as much change in the way of Trump. That said, in typical elections this does indeed make a huge difference regardless, as it’s the older voters that vote the most (old). That’s why it’s so important that many young voters are actually voting compared to before, as this drive to vote acts a form of mitigation against the older voters’ support of Trump.
 
-•	https://www.pewresearch.org/fact-tank/2014/07/09/the-politics-of-american-generations-how-age-affects-attitudes-and-voting-behavior/
-•	https://www.texasobserver.org/young-voters-texas-2020/
-•	https://www.mckinsey.com/featured-insights/employment-and-growth/poorer-than-their-parents-a-new-perspective-on-income-inequality#
-•	https://pubmed.ncbi.nlm.nih.gov/10750310/
+
 
 Figure 2’s comparison of the votes by gender reveals some interesting findings. While the majority of male voters support Trump, the real highlight of this figure is the fact that nearly 60% of female voters support Biden, essentially twice the difference between Biden and Trump for male voters. Again, there’s many reasons why this could be the case, but there are two major reasons that present themselves. 
 
@@ -693,13 +713,32 @@ The first is the way that Trump has treated women in the past, a notable example
 
 Overall, while there in majority men vote support Trump, a greater percentage of women support Biden. In conjunction with the metric that women vote more than man, this finding supports a Biden victory. (gender diff)
 
-•	https://www.nytimes.com/2016/10/08/us/donald-trump-tape-transcript.html
-•	https://www.bbc.com/news/election-us-2020-54512678
-•	https://cawp.rutgers.edu/sites/default/files/resources/genderdiff.pdf
+
+
+As discussed in the results, race can also play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. 
+
+Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian Americans live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support Biden more to various degrees.
+
+In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
+
+## Race
+
+As discussed in the results, race can play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or  African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian American's live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support biden more to various degrees.
+
+In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
+
+Figure 4 outlines the difference in voting based on the voter’s level of education. The first thing of note is that there is a slight majority for Trump for those who have not attended university. However, the difference is so small that it’s essentially equal from a top down perspective. In comparison, those who have attended university tend to support Biden. There are a few reasons this could be the case. One is the notion that universities “make” people more left-wing. Whether or not this is truly the case, and if so for what reason, aside, this is a commonly held belief. However, this may not be the sole reason why such a divide exists. In recent years, conservatives have majorly considered higher education to have a negative effect on the country. (pewsocial) Inferring from this, conservatives are thus less likely to attend university or view university with a particularly positive perspective than their left-wing counterparts. 
+
+The difference between those who support Trump and those who support Biden for voters who have attended university is not insignificant, but in relation to those previously discussed, it may seem inconsequential.  That said, it’s still an important finding if not for the fact that based on Figure 8, we can see that the majority of the population has attended university. As the majority of post-secondary attendees support Biden and it’s relatively equal for those who haven’t, this naturally supports a Biden victory.
+
+
+
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
+While our model using multilevel regression with post-stratification was able to provide a election result that resembles many other polling predictions (Biden winning popular vote slightly ahead of Trump), our model had many weaknesses that we would like to address and improve in the future. First and foremost, we only predicted the the votes towards either Biden or Trump, and did not consider the possibilty that people may vote for other candidates or people may not vote in this election. While justified as the vast majority of votes entered will go towards Biden and Trump, it will be insightful to analyze which demographics are likely to not vote for the two main parties, and which demographics are likely to not vote at all (maybe younger people are more apathetics to voting, or certain minorities always vote). There were also many articles we found indicating variables such as religion and family status could play a key indication of how individuals vote, but due to restrictions of the datasets, we did not have the information available. We also originally planned on creating a time series analysis on the Nationscape dataset in order to gain some insight in the data we used to train our model which we would like to include in the future. Furthermore, we would like to further explore various variables and factors of our model, in order to get a more significant accuracy. 
+
+
 
 \newpage
 
@@ -732,3 +771,20 @@ https://www.politifact.com/factchecks/2014/jan/09/us-census-bureau/americans-mus
 https://money.usnews.com/money/retirement/aging/articles/why-older-citizens-are-more-likely-to-vote
 
 Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, June 10-17, 2020 (version 20200814). Retrieved from [URL].
+
+https://www.cnn.com/2020/07/01/politics/donald-trump-black-lives-matter-confederate-race/index.html
+
+https://www.cnbc.com/2020/08/31/trump-suggests-accused-kenosha-killer-kyle-rittenhouse-acted-in-self-defense.html
+
+https://www.nytimes.com/2020/03/23/us/chinese-coronavirus-racist-attacks.html
+
+https://www.cnbc.com/2019/09/11/native-american-voters-could-help-swing-the-2020-presidential-election.html
+
+•	https://www.pewresearch.org/fact-tank/2014/07/09/the-politics-of-american-generations-how-age-affects-attitudes-and-voting-behavior/
+•	https://www.texasobserver.org/young-voters-texas-2020/
+•	https://www.mckinsey.com/featured-insights/employment-and-growth/poorer-than-their-parents-a-new-perspective-on-income-inequality#
+•	https://pubmed.ncbi.nlm.nih.gov/10750310/
+•	https://www.nytimes.com/2016/10/08/us/donald-trump-tape-transcript.html
+•	https://www.bbc.com/news/election-us-2020-54512678
+•	https://cawp.rutgers.edu/sites/default/files/resources/genderdiff.pdf
+https://www.pewsocialtrends.org/essay/the-growing-partisan-divide-in-views-of-higher-education/
