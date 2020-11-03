@@ -21,7 +21,7 @@ library(tidyverse)
 library(knitr)
 library(palmerpenguins)
 ```
-```{r loading}
+```{r loading, echo=FALSE}
 # Load required data and models
 cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
 ```
@@ -31,7 +31,7 @@ cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
 # Data
 To train our model to predict the outcome of the 2020 US presidential election, we used Wave 49 of the Nationscape Dataset (results from the week of June 18-24, 2020). We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Individual-level survey dataset."
 
-TODO: To make predictions on the outcome of the 2020 US presidential election, we used... We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Post-stratification dataset." The explanation of multilevel modelling with post-stratification can be found in the "Model" section.
+To make predictions on the outcome of the 2020 US presidential election, we used the results of the 2018 American Community Survey. We will discuss how this data was collected, its key features, and what the data looks like in the section titled "Post-stratification dataset." The explanation of multilevel modelling with post-stratification can be found in the "Model" section.
 
 ## Individual-level survey dataset
 
@@ -161,19 +161,19 @@ reduced_data$vote_biden <- plyr::mapvalues(reduced_data$vote_2020,
 reduced_data <- droplevels(reduced_data)
 ```
 
-The distributions of each of our cleaned variables (with the exception of gender and state) are shown in the following two pages. 
+The distributions of each of our cleaned variables (with the exception of gender) are shown in the following few pages. 
 
-```{r agedist, fig.height=4, fig.cap="Distribution of the age of respondents in percentages.", message=FALSE, echo=FALSE}
-# total number of observations in the dataset
+```{r agedist, fig.height=4, fig.cap="Distribution of the age of survey respondents in percentages.", message=FALSE, echo=FALSE}
+# Total number of observations in the dataset
 total_count = nrow(reduced_data)
 
-# summary table with counts for sex
+# Summary table with counts for sex
 tibble_age <- data.frame(table(reduced_data$age_group)) %>%
   rename(
     age_group = Var1,
     count = Freq
   )
-# distribution of sex as a bar graph in percentages
+# Distribution of sex as a bar graph in percentages
 ggplot(tibble_age, aes(x = age_group, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   geom_text(aes(label = paste0(round(count/total_count*100), "%")),
@@ -184,8 +184,8 @@ ggplot(tibble_age, aes(x = age_group, y = count/total_count)) +
 ```
 
 
-```{r racedist, fig.height=4, fig.cap="Distribution of the race of respondents in percentages.", message=FALSE, echo=FALSE}
-# summary table with counts for race
+```{r racedist, fig.height=4, fig.cap="Distribution of the race of survey respondents in percentages.", message=FALSE, echo=FALSE}
+# Summary table with counts for race
 tibble_race <- data.frame(table(reduced_data$race_ethnicity)) %>%
   rename(
     race = Var1,
@@ -194,26 +194,28 @@ tibble_race <- data.frame(table(reduced_data$race_ethnicity)) %>%
 tibble_race$race <- factor(tibble_race$race, 
                                       levels = c("White", "Black, or African American", 
                                                  "Asian (Chinese)", "Asian (Japanese)",
-                                                 "Asian (Other)", "American Indian or Alaska Native", "Some other race"))
-# distribution of sex as a bar graph in percentages
+                                                 "Asian (Other)", "American Indian or Alaska Native", 
+                                                 "Some other race"))
+# Distribution of sex as a bar graph in percentages
 ggplot(tibble_race, aes(x = race, y = count/total_count)) + 
   geom_bar(stat = "identity") +
-  geom_text(aes(label = paste0(round(count/total_count*100), "%")),
-            color="black",
-            position = position_stack(vjust = 1)) +
-  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(
+    aes(x = race, y = count/total_count, label = paste0(round(count/total_count*100), "%")),
+    position = position_dodge(width = 1),
+    vjust = -0.5, size = 3) +
+  theme(axis.text.x = element_text(angle = 20, hjust=1)) +
   xlab("Race") +
   ylab("Percentage of Respondents")
 ```
 
-```{r educationdist, fig.height=4, fig.cap="Distribution of the education of respondents in percentages.", message=FALSE, echo=FALSE}
-# summary table with counts for race
+```{r educationdist, fig.height=4, fig.cap="Distribution of the education of survey respondents in percentages.", message=FALSE, echo=FALSE}
+# Summary table with counts for race
 tibble_education <- data.frame(table(reduced_data$education)) %>%
   rename(
     education = Var1,
     count = Freq
   )
-# distribution of sex as a bar graph in percentages
+# Distribution of sex as a bar graph in percentages
 ggplot(tibble_education, aes(x = education, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   geom_text(aes(label = paste0(round(count/total_count*100), "%")),
@@ -223,14 +225,29 @@ ggplot(tibble_education, aes(x = education, y = count/total_count)) +
   ylab("Percentage of Respondents")
 ```
 
-```{r votedist, fig.height=4, fig.cap="Distribution of the vote of respondents in percentages.", message=FALSE, echo=FALSE}
-# summary table with counts for race
+```{r statedist, fig.height=4, fig.cap="Distribution of the state of survey respondents in percentages.", message=FALSE, echo=FALSE}
+# Summary table with counts for race
+tibble_state <- data.frame(table(reduced_data$state)) %>%
+  rename(
+    state = Var1,
+    count = Freq
+  )
+# Distribution of sex as a bar graph in percentages
+ggplot(tibble_state, aes(x = state, y = count/total_count)) + 
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust=1)) +
+  xlab("State") +
+  ylab("Percentage of Respondents")
+```
+
+```{r votedist, fig.height=4, fig.cap="Distribution of the vote of survey respondents in percentages.", message=FALSE, echo=FALSE}
+# Summary table with counts for race
 tibble_vote <- data.frame(table(reduced_data$vote_2020)) %>%
   rename(
     vote = Var1,
     count = Freq
   )
-# distribution of sex as a bar graph in percentages
+# Distribution of sex as a bar graph in percentages
 ggplot(tibble_vote, aes(x = vote, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   geom_text(aes(label = paste0(round(count/total_count*100), "%")),
@@ -240,73 +257,101 @@ ggplot(tibble_vote, aes(x = vote, y = count/total_count)) +
   ylab("Percentage of Respondents")
 ```
 
-Out of the respondents, approximately 50% were female and 50% were male. Most of the respondents were in their 60's and 70's, while the next most common demographic were respondents in their 40's and 50's (Figure 1). This preliminary look at the dataset is fairly consistent with Canadian demographics according to the 2016 Census, with the female response being approximately 3% higher than expected and the average age being approximately 11 years older than expected (the average Canadian age is 41 while the average respondent age was 52). This older demographic makes sense as individuals less than 15 years of age were not eligible to respond to the survey and are therefore not represented here. 
+Out of the respondents, approximately 50% were female and 50% were male (hence gender was not graphed). The distribution of respondent age approaches a bell shaped curve with much fewer "18 to 28" year-olds and individuals aged "79 and above" than any other age group (Figure \@ref(fig:agedist)). This is not too surprising for the older age division because their technology use is likely very limited and thus few older respondents are reached. However, it's surprising so few young adults participated in the survey. The majority of survey respondents were White (76%), followed by African American (11%), Asian (4%), Native American (1%), and some other race, meaning bi- or multi-racial (6%) (Figure \@ref(fig:racedist)). This mostly aligns racial demographic estimates from the US Census Bureau although they reported that only 2.8% of the American population is of two or more races while 13% are African American and 6% are Asian. This redistribution of minority frequencies is unfortunate but shouldn't end up significantly impacting our prediction (because our calculation of the popular vote is conducting using post-stratification data while we are only using survey data to train our model on the relationship between our explanatory and response variables).
 
-Of the 20,602 responses, 194 rows were dropped if the value for a variable was not available. For our purposes of attempting to model mental health, we consequently removed these individuals from the dataset we used in generating our model. Furthermore, according to Figure 5, the responses are heavily skewed towards positive responses, with 30% of respondents replying with 'Excellent' and 34% replying 'Very good'. 28% rated their mental health as 'Good' with the remaining 8% split 6 to 2 with regards to 'Fair' and 'Poor', respectively. These results overwhelmingly indicate that a large proportion of the sampled population feel that their mental is very strong. However, we proceed with modeling in the next section of this paper to better understand the contribution of the chosen demographic and family factors on self-rated mental. Is there a pattern of traits that separate "Excellent", "Very good", and "Good" ratings? What are the biggest distinctions between an individual with good mental health and poor mental health? These are some of the motivating questions we strive to answer with our model.
+71% of responses had some level of post secondary education (Figure \@ref(fig:educationdist)), which doesn't line up with US Census estimates of only 32% of Americans having obtained a bachelor's degree or higher (again, emphasizing the need for prediction on post-stratification data). The state distribution has a lot of factors but basic sanity checks suggest that the distribution is proportional to the American population with the majority of respondents residing in California, Florida, New York, and Texas (Figure \@ref(fig:statedist)), which are the four most populous states. Lastly, 52% of respondents planned on voting for Joe Biden with Donald Trump behind by 4 points (Figure \@ref(fig:votedist)). We look forward to predicting the election results by training our model on this dataset and seeing how the voting distribution changes when generating predictions given post-stratification data.
+
+
 
 ## Post-stratification dataset
-The post-stratification dataset was gathered from the American Community Survey (ACS), a project aiming to mitigate issues stemming from the census’ 10-year intervals by providing an annualized version of data like that produced by the decennial census long form. The dataset used in this study is specifically that of the 2018 ACS data. The ACS data can be accessed at the IPUMS website. More details on attaining and cleaning data are found in 01-data_cleaning-post-strat.R in the scripts folder of the git repository.
 
-The target population, much like the census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living “Group Quarters”, non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
+### Data collection
+The post-stratification dataset was gathered from the American Community Survey (ACS), a project aiming to mitigate issues stemming from the Census’ 10-year intervals by providing an annualized version of data like that produced by the decennial census long form. The dataset used in this study is specifically that of the 2018 ACS data. The ACS data can be accessed at the IPUMS website. More details on attaining and cleaning data are found in 01-data_cleaning-post-strat.R in the scripts folder of the git repository. TODO
 
-Every month, a systemic sample is created for each US county or equivalent, where they are mailed the ACS survey at the start of the month. As of February 2002, the sampling rate of all counties has been 2.5%, except for Houston, Texas, which is sampled at 1% (due to the size of the population). For every site, the sampling is broken into two steps. The first step is sampling 17.5% of the population, which is then subsampled from to achieve that desired percentage. All non-respondents are subsequently contacted by phone for a computer assisted telephone interview one month later. One third of non-respondents that have reached this point are then sampled from to be contacted for a computer assisted personal interview following the previous telephone interview attempt. Beyond this sample (referred to as the National Sample or Supplemental Sample), data was also collected at 31 selected test sites to represent areas with various county population sizes or areas that were difficult to enumerate. The ACS data is weighted in order to ensure reliable and usable estimated regarding the population. 
+The target population, much like the Census, is essentially anyone who resides in a dwelling in the US. Following this, the sampling frame of the ACS is the Master Address File that is maintained by the US Census Bureau. Created for the 2000 Census, it was originally based on the 1990 Address Control File and the United States Postal Service’s Delivery Sequence File. The maintaining and updating of this file is crucial to the efforts of the ACS and any other body that makes use of it. In addition, the ACS samples 2.5 percent of the population living in “Group Quarters”, which are non-housing units (eg. nursing homes, prisons, college dorms, etc.). In total, the 2018 ACS data contains about 3.2 million observations, sampled from across the country.
 
+Every month, a systemic sample is created for each US county or equivalent, where they are mailed the ACS survey at the start of the month. As of February 2002, the sampling rate of all counties has been 2.5%, except for Houston, Texas, which is sampled at 1% (to reduce cost due to the size of the population). For every site, the sampling is broken into two steps. The first step is sampling 17.5% of the population, which is then subsampled from to achieve the desired 2.5 or 1% of the county. All non-respondents are subsequently contacted by phone for a computer assisted telephone interview one month later. One third of non-respondents that have reached this point are then sampled from to be contacted for a computer assisted personal interview following the previous telephone interview attempt. Beyond this sample (referred to as the National Sample or Supplemental Sample), data was also collected at 31 selected test sites to represent areas with various county population sizes or areas that were difficult to enumerate. The ACS data is weighted in order to ensure reliable and usable estimated regarding the population. 
+
+### Data features and visualization 
 The ACS Questionnaire asks questions regarding every inhabitant in the residence it is sent to. However, the most information is required of “Person 1”, the person whose name the residence is owned in, being bought in, or rented in (or any adult, if none of those labels apply). The ACS questionnaire is extremely like that of the US Census Questionnaire, given that it’s meant to be a substitution for it. It was developed after the Census Bureau was provided with various subjects that other federal agencies justified as important, categorizing each subject as “mandatory”, “required”, or “programmatic”, from which the ACS collected data for both the “mandatory” and “required” subjects. This approach illustrates itself in the questionnaire, as every question is answered by an objective fact, whether it’s a checkbox, a number, or a short answer (such as the person’s major). This allows little ambiguity in how the question must be answered, and makes each response fairly easy, which is a major strength of the questionnaire. However, depending on the number of people in the residence, the survey can be on the longer side (up to 11 pages). Combined with the fact that it is legally mandated that the response is filled out, with a potential fine of up to $5000, respondents may feel the need to rush through or give a fake response to questions they may not know immediately (such as when the residence was built). In addition, in the case that there is not one single person responsible for the residence, like in the case where multiple people are renting a room from one landlord who doesn’t live at the residence, then the data of those who are not “Person 1” is not collected, despite the fact that they are on the same standing in the eyes of the survey. However, no one has been prosecuted for not filling out the survey since 1970 and the case outlined in the second point is relatively rare in the total population, so these weaknesses are fairly minor in the grand scheme of things. 
 
-As mentioned above, the variables we used were age (the age of the respondent), state (the state they lived in), gender (what gender they identified as), education (what their highest level of education was), and race/ethnicity of the respondent. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching up spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.   <-- This section is to be updated accordingly
+As mentioned above, the variables we used were age (the age of the respondent), gender (what gender they identified as), race/ethnicity of the respondent, state (the state they lived in), and education (what their highest level of education was). We did not find any variables that were similar enough to the ones chosen. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.  TODO
 
-```{r create post-strat graphs, message=FALSE, echo=FALSE}
+```{r poststratage, fig.height=4, fig.cap="Distribution of the age of ACS respondents in percentages", echo=FALSE}
 cleaned_data <- labelled::to_factor(cleaned_data)
+# Plot age_group
+perc_age_group <- cleaned_data %>% count(age_group) %>% mutate(perc = n/nrow(cleaned_data))
+ggplot(perc_age_group, aes(x = age_group, y = perc)) + 
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = paste0(round(perc*100), "%")), 
+            color="white", 
+            position = position_stack(vjust = 0.5)) +
+  labs(x = "Age", y = "Percentage of Respondents")
+```
 
-# Plot Race
-perc_race <- cleaned_data %>% count(race_ethnicity) %>% mutate(perc = n/nrow(cleaned_data))
-race <- perc_race %>% ggplot(aes(x = race_ethnicity, y = perc)) + geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Race/Ethnicity of Respondents in 2018 ACS data", x = "Race/Ethnicity", y = "Percentage", subtitle = "Figure X")
-
+```{r poststratgender, fig.height=4, fig.cap="Distribution of the gender of ACS respondents in percentages", echo=FALSE}
 # Plot Gender
 perc_gender <- cleaned_data %>% count(gender) %>% mutate(perc = n/nrow(cleaned_data))
-gender <- perc_gender %>% ggplot(aes(x = gender, y = perc)) + geom_bar(stat = "identity") + 
-  labs(title = "Gender of Respondents in 2018 ACS data", x = "Gender", y = "Percentage", subtitle = "Figure X")
+ggplot(perc_gender, aes(x = gender, y = perc)) + 
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = paste0(round(perc*100), "%")), 
+            color="white", 
+            position = position_stack(vjust = 0.5)) +
+  labs(x = "Gender", y = "Percentage of Respondents")
+```
 
-# Plot education
+```{r poststratrace, fig.height=4, fig.cap="Distribution of the race of ACS respondents in percentages", echo=FALSE}
+# Plot race
+perc_race <- cleaned_data %>% count(race_ethnicity) %>% mutate(perc = n/nrow(cleaned_data))
+perc_race$race_ethnicity <- factor(perc_race$race_ethnicity, 
+                                      levels = c("White", "Black, or African American", 
+                                                 "Asian (Chinese)", "Asian (Japanese)",
+                                                 "Asian (Other)", "American Indian or Alaska Native", 
+                                                 "Some other race"))
+ggplot(perc_race, aes(x = race_ethnicity, y = perc)) + 
+  geom_bar(stat = "identity") +
+  geom_text(
+    aes(x = race_ethnicity, y = perc, label = paste0(round(perc*100), "%")),
+    position = position_dodge(width = 1),
+    vjust = -0.5, size = 3) +
+  theme(axis.text.x = element_text(angle = 20, hjust=1)) + 
+  labs(x = "Race", y = "Percentage of Respondents")
+```
+
+```{r poststratedu, fig.height=4, fig.cap="Distribution of the education of ACS respondents in percentages", echo=FALSE}
 perc_education <- cleaned_data %>% count(education) %>% mutate(perc = n/nrow(cleaned_data))
-perc_education$education <- perc_education$education %>% factor(levels = c("High School or less", "Post Secondary Degree"))
-education <- perc_education %>% ggplot(aes(x = education, y = perc)) + geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Education of Respondents in 2018 ACS data",
-                                                                               x = "Education", y = "Percentage", subtitle = "Figure X")
+ggplot(perc_education, aes(x = education, y = perc)) +
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = paste0(round(perc*100), "%")), 
+            color="white", 
+            position = position_stack(vjust = 0.5)) +
+  labs(x = "Education", y = "Percentage")
 
-# Explain 88 Olds are shit
+```
 
+```{r poststratstate, fig.height=4, fig.cap="Distribution of the state of ACS respondents in percentages", echo=FALSE}
 # Plot state
 perc_state <- cleaned_data %>% count(state) %>% mutate(perc = n/nrow(cleaned_data))
 perc_state <- labelled::to_factor(perc_state)
 
-state <- perc_state %>% ggplot(aes(x = state, y = perc)) + geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "State of Respondents in 2018 ACS data", x = "State", y = "Percentage", subtitle = "Figure X")
+ggplot(perc_state, aes(x = state, y = perc)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, hjust=1)) +
+  labs(x = "State", y = "Percentage of Respondents")
+```
 
-# Plot age_group
-perc_age_group <- cleaned_data %>% count(age_group) %>% mutate(perc = n/nrow(cleaned_data))
-age_group <- perc_age_group %>% ggplot(aes(x = age_group, y = perc)) + geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + labs(title = "Age of Respondents in 2018 ACS data",
-                                                                               x = "Age Group", y = "Percentage", subtitle = "Figure X")
-```
-```{r post-strat graphs,fig.height=6, message=FALSE, echo=FALSE}
-race
-education
-gender
-state
-age_group
-```
+Due to the nature of our methodology, we are able to directly compare and contrast demographic distributions for the individual survey data and the post-stratification data. The gender distribution of the post-stratification data (Figure \@ref(fig:poststratgender)) is fairly similar to that of the survey distribution (50-50 split. The ACS distribution of age is closer to what we would expect from "18 to 28" year-olds (Figure \@ref(fig:poststratage)), indicating that the Nationscape survey results are skewed towards an older demographic (Figure \@ref(fig:agedist)). Again, there is certain discrepancy between expected race distributions (Figure \@ref(fig:poststratrace)) and the estimates reported by the Census, which we may take into account when making predictions on the post-stratification dataset as a proxy for the popular vote. 
+
+There is a major difference in education distribution across surveys as shown in Figure \@ref(fig:poststratedu) where only 53% of respondents had some level of post secondary education compared to 71% in Figure \@ref(fig:educationdist). This better matches the data reported in the US, indicating that the true level of post secondary education is much lower than represented in the Nationscape survey (Figure \@ref(fig:educationdist)). Lastly, the state distribution looks proportional to the American population (Figure \@ref(fig:poststratstate)) after conducting the same sanity check as before. The discrepancy between the Nationscape survey data and the post-stratification data with regards to age as well as education indicates how important it is that we are using multi-level regression model with post-stratification to predict the popular vote. 
 
 # Model
-
 \begin{equation}
 Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
 \end{equation}
 
-Equation \@ref(eq:bayes) seems useful, eh?
+\@ref(eq:bayes)
 
-Our model is built on MRP, which stands for multi-level regression with post-stratifications. We utlize multi-level regression in order to create a model that we can build predictions upon. Since our predictor y is a binary variable (Biden or Trump), we used a logistic regression in order build our model. A logistic regression predicts the likelihood of an outcome based on various independent variables and it fits a model on a log curve which is bound in the Y axis in the range of [0,1].. In our case, we judge the likelihood that an individual would vote for Joe Biden in comparison to Donald Trump, given the individuals age, gender, education, state, and race. Given these inputs and outputs, we can train our logistic regression model using BRMS to predict which values for each variable predicts certain votes, and this will be discussed further in the later section. In our model, as it is a binary predictor, we round the prediction to the nearest number (more than 0.5 is rounded to 1, meaning this individual is likely to vote for Joe Biden, and less than 0.5 is rounded to 0, meaning this individual is likely to vote to Donald Trump).
+Our model is built on MRP, which stands for multi-level regression with post-stratification. We utilize multi-level regression in order to create a model that we can generate predictions with. Since our response variable is a binary variable (Biden or Trump), we used logistic regression to order build our model. A logistic regression model predicts the likelihood of an outcome based on various independent variables and it fits a model on a log curve which is bound in the Y axis in the range of [0,1]. In our case, we judge the likelihood that an individual would vote for Joe Biden in comparison to Donald Trump, given the individuals age, gender, education, state, and race. Given these inputs and outputs, we can train our logistic regression model using BRMS to predict which values for each variable predicts certain votes, and this will be discussed further in the later section. In our model, as it is a binary predictor, we round the prediction to the nearest number (more than 0.5 is rounded to 1, meaning this individual is likely to vote for Joe Biden, and less than 0.5 is rounded to 0, meaning this individual is likely to vote to Donald Trump).
 
 One variable we discussed about including was annual income, however when we added the income lowered our cross validation score and the well discussed issues with self-reported income (bias, inaccurate estimations, not reporting) convinced us to disclude income. Another variable we debated on was education. Originally, education was included, however, education severely impacted our cross validation accuracy. We solved these issues by summarizing all education levels into 2 levels: at least some Post-Secondary and No post-secondary. This allowed our model to perform slightly better, but more importantly, there was a significant difference in the voting preference between the 2 groups. Another variable that helped increase accuracy after manipulation was age, where it became a better independent variable after breaking age into groups on 10's (eg. 18-28, 29-38) in order to better represent different age groups. Other groupings we tried was breaking into youth, middle age, and seniors (18-35, 36-55, 55+) and leaving age as individual numeric values, however both of these breakdowns did not provide any significant value. 
 
@@ -376,8 +421,6 @@ In this case, using MRP makes sense as we have voting information provided by Na
 https://arxiv.org/pdf/1908.06716.pdf
 https://www.sciencedirect.com/science/article/pii/S0261379409001176?casa_token=ec6M6gmXHpMAAAAA:GdXW-ErZjnoZ4GYv_TEPydUAhwppRK0GbPth6kXbSebh8Iz2kmmIMCc1LgczlhByHSMr57NGGmsp
 
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-@tausanovitch_vavreck_2019
 
 # Results
 
@@ -496,15 +539,15 @@ grouped_bar_chart(grouped, "Education", "Percentage",
 ## Post-stratification
 
 ```{r}
-cell_counts <- readRDS("inputs/cell_counts.RDS")
-training_data <- readRDS("inputs/training_data.RDA")
-model <- readRDS("model/4chains_3000iter_.rds")
+cell_counts <- readRDS("../../inputs/cell_counts.RDS")
+training_data <- readRDS("../../inputs/training_data.RDA")
+model <- readRDS("../../model/4chains_3000iter_.rds")
 
-race_res <- readRDS("processed_data/race_res.RDS")
-gender_res <- readRDS("processed_data/gender_res.RDS")
-state_res <- readRDS("processed_data/state_res.RDS")
-age_res <- readRDS("processed_data/age_res.RDS")
-education_rest <- readRDS("processed_data/age_res.RDS")
+race_res <- readRDS("../../processed_data/race_res.RDS")
+gender_res <- readRDS("../../processed_data/gender_res.RDS")
+state_res <- readRDS("../../processed_data/state_res.RDS")
+age_res <- readRDS("../../processed_data/age_res.RDS")
+education_res <- readRDS("../../processed_data/age_res.RDS")
 
 ```
 
@@ -599,7 +642,7 @@ gender_res %>%
   coord_flip()
 ```
 
-```{r}
+```{r eval=FALSE}
 education_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(education), color = "MRP estimate")) + 
   geom_point() +
@@ -633,6 +676,9 @@ Weaknesses and next steps should also be included.
 
 
 # References
+
+Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
+@tausanovitch_vavreck_2019
 R
 Survey and ACS dataset
 https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-User-Guide_2020sep10.pdf
@@ -645,5 +691,7 @@ https://www.census.gov/programs-surveys/acs/technical-documentation/errata/120.h
 https://usa.ipums.org/usa/resources/voliii/formACS2018.pdf
 https://usa.ipums.org/usa/resources/codebooks/ACS_codebook.pdf
 https://www.politifact.com/factchecks/2014/jan/09/us-census-bureau/americans-must-answer-us-census-bureau-survey-law-/
+
+https://money.usnews.com/money/retirement/aging/articles/why-older-citizens-are-more-likely-to-vote
 
 Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from [URL].
