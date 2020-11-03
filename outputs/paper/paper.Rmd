@@ -457,7 +457,7 @@ education_res <- readRDS("../../processed_data/education_res.RDS")
 
 ```
 
-The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure N shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
+The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure \@ref(fig:raceproportions) shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
 
 ```{r raceproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden Votes by race", message=FALSE, echo=FALSE}
 # following graphs are inspired by Monica Alexander 
@@ -478,10 +478,9 @@ race_res %>%
   scale_color_manual(name = "", values = c("MRP estimate" = "black", 
                                            "ACS raw data" = "red")) + 
   theme_bw(base_size = 14) + coord_flip() +
-  ggtitle("Figure N: Proportion of Forecasted Votes for Biden By Race")
 
 ```
-In Figure N show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
+In Figure \@ref(fig:stateproportions) show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
 
 ```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of Biden Votes by state", message=FALSE, echo=FALSE}
 
@@ -501,12 +500,10 @@ state_res %>%
   scale_color_manual(name = "", values = c("MRP estimate" = "black", "ACS raw data" = "red")) + 
   theme_bw() +
   coord_flip() +
-  ggtitle("Figure N: Proportion of Forecasted Votes for Biden By State")
-
 
 ```
 
-Similarly for age, there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden
+Similarly for age, there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden (Figure \@ref(fig:ageproportions))
 ```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
 
 age_res %>% 
@@ -528,10 +525,10 @@ age_res %>%
 
 ```
 
-Finally in Figures N and N below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
+Finally in Figures \@ref(fig:genderproportions) and \@ref(fig:educationproportions) below, we show that Females are more likely to vote for Biden compared to Males, and a larger portion of individuals with at least some college education are projected to vote for Biden in comparison to High School educated and below.
 
 
-```{r}
+```{r genderproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
 gender_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(gender), color = "MRP estimate")) + 
   geom_point() +
@@ -551,7 +548,7 @@ gender_res %>%
 ```
 
 
-```{r}
+```{r educationproportions, fig.height=4,fig.width=8, fig.cap="Proportion of Biden votes within age group.", message=FALSE, echo=FALSE}
 # education_res$age_group <- as.factor(education_res$age_group)
 
 education_res %>% 
@@ -606,19 +603,13 @@ The first is the way that Trump has treated women in the past, a notable example
 
 Overall, while there in majority men vote support Trump, a greater percentage of women support Biden. In conjunction with the metric that women vote more than man, this finding supports a Biden victory. (gender diff)
 
-
-
-As discussed in the results, race can also play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. 
-
-Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian Americans live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support Biden more to various degrees.
-
-In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
-
 ## Race
 
-As discussed in the results, race can play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or  African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian American's live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support biden more to various degrees.
+As discussed in the results, race can play a significant factor in predicting an individuals vote in the 2020 election. As shown in Figure N, 90% of African American or Black voters are projected to vote for Biden, with Asian voters follow closely with almost 80% of Chinese voters projected to vote for Biden. Given Trump's response to the Black Life's Matter movement, and his response to Coronavirus (China virus according to him), it seems clear that voters belonging to these groups feel strongly against him. There has been protests and outrage country wide in response to police brutality leading to the deaths of black or  African American citizens, many protesters feel President Trump is ignoring their voice, focusing on the riots and ignoring the multitude of peaceful protests also happening, going as far as implying the movement is a "symbol of hate (Liptak & Holmes, 2020)." The same article brings up other acts of Trump, such as re-tweeting videos of supporter chanting "White power", Trump diminishing the notion of Black Lives Matter by correcting it into All Lives Matter,  and defending an individual who was accused and convicted of shooting and killing 2 black lives matter protesters (Breuninger, 2020). Googling the words Trump and Black Lives Matter results in pages upon pages of news articles, blog posts and tweets of President Trump seemingly repeatedly condemning Black Lives Matter supporters and supporting anti-black lives matter movements. Whether or not these articles have taken his words out of context and twisted his words around, it seems clear that Trump is labeled to be "anti-black" and our predictions indicate that these feelings among the Black and African American community will reflect heavily on their votes, with less than 10% projected to be voting for Trump. Another major issue is the global pandemic caused by the SARS-CoV-2 virus (or according to Trump, the China Virus). Asian American's live in fear of xenophobia and other racist attacks, as many interviewed in the New York Times article (Tavernise & Oppel, 2020) recounts racist attacks and comments, many calling for Trump to stop targetting China. The Vancouver police has reported a 600% increase in reports of hate crimes against the Asian community (Gill, 2020), and while this is not in the USA, it's obvious that Asians living in the USA has decided to hedge their support towards Biden. Of course there are many reasons that affect an individual's decision to vote, but these recent and relevant events may be one of the reasons that voters of Asian and Black or African American races are supporting Joe Biden in the upcoming election. In general, all ethnic minorities (with the exception of American Indian or Alaska Native) support Biden more to various degrees.
 
 In contrast, White and American Indian or Alaska Native groups are predicted to vote more for Trump in comparison to Biden. This is interesting they are different from many other minority groups, who strongly prefer Biden rather than trump. In an article by the CNBC written by Myong (2020), American Indian or Alaska Natives are considered to be a key demographic as they could help swing votes in as many as 7 states. This could explain the why the votes are predicted to be split between Trump and Biden, as both parties are putting a focus on gaining these votes. Similarily with the White population, as they represent the vast majority of citizens in USA, they will be the target race demographic for both Trump and Biden as they both fight for what is predicted to be a close election race.
+
+## Education
 
 Figure 4 outlines the difference in voting based on the voter’s level of education. The first thing of note is that there is a slight majority for Trump for those who have not attended university. However, the difference is so small that it’s essentially equal from a top down perspective. In comparison, those who have attended university tend to support Biden. There are a few reasons this could be the case. One is the notion that universities “make” people more left-wing. Whether or not this is truly the case, and if so for what reason, aside, this is a commonly held belief. However, this may not be the sole reason why such a divide exists. In recent years, conservatives have majorly considered higher education to have a negative effect on the country. (pewsocial) Inferring from this, conservatives are thus less likely to attend university or view university with a particularly positive perspective than their left-wing counterparts. 
 
@@ -626,7 +617,9 @@ The difference between those who support Trump and those who support Biden for v
 
 Given that our model is only based on a sample of the population, we can say that it directly represents the "small world". It's using that sample we can create models, see relationships between variables, and make observations/findings. However, arguably more important, is the representation of the "large world". Using post-stratification, we are able to apply these findings on a much larger scale. The model very well represents many aspects of the real world population. However, it isn't a perfect match, as it only approximates real life. For example, these findings are well and good and in theory should perform well in the "large world", but we can't say for sure that it's a perfect match until we see it in action.
 
+## States
 
+Overall, as shown in results, the states are mostly split between Trump and Biden. Certain states such as Vermont and Arizona heavily favour Biden and Trump respectively. Many of the states that are currently split will be a major focus for the presidential candidates as gaining these votes can be crucial to winning the election. As such these states will likely have received a lot of attention in the past few weeks.
 
 
 ## Weaknesses and next steps
