@@ -119,9 +119,3 @@ education_res <- model %>%
             upper = quantile(vote_biden_predict, 0.975))
 
 saveRDS(education_res, file="processed_data/education_res.RDS")
-
-head(state_res)
-head(education_res)
-head(age_res)
-head(race_res)
-head(gender_res)
