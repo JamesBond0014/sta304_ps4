@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.6.2)  2 NOV 2020 23:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.6.2)  2 NOV 2020 23:36
 entering extended mode
 **./paper.tex
 (paper.tex
@@ -1044,31 +1044,31 @@ Package pdftex.def Info: paper_files/figure-latex/votedist-1.pdf  used on input
 acedist-1.pdf>] [6 <./paper_files/figure-latex/educationdist-1.pdf> <./paper_fi
 les/figure-latex/statedist-1.pdf>] [7 <./paper_files/figure-latex/votedist-1.pd
 f>]
-<paper_files/figure-latex/poststratage-1.pdf, id=99, 469.755pt x 289.08pt>
+<paper_files/figure-latex/poststratage-1.pdf, id=100, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/poststratage-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/poststratage-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/poststratage-1.pdf  used on i
 nput line 340.
 (pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
-<paper_files/figure-latex/poststratgender-1.pdf, id=100, 469.755pt x 289.08pt>
+<paper_files/figure-latex/poststratgender-1.pdf, id=101, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/poststratgender-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/poststratgender-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/poststratgender-1.pdf  used o
 n input line 346.
 (pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
-<paper_files/figure-latex/poststratrace-1.pdf, id=101, 469.755pt x 289.08pt>
+<paper_files/figure-latex/poststratrace-1.pdf, id=102, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/poststratrace-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/poststratrace-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/poststratrace-1.pdf  used on 
 input line 352.
 (pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
-<paper_files/figure-latex/poststratedu-1.pdf, id=102, 469.755pt x 289.08pt>
+<paper_files/figure-latex/poststratedu-1.pdf, id=103, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/poststratedu-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/poststratedu-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/poststratedu-1.pdf  used on i
 nput line 358.
 (pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
-<paper_files/figure-latex/poststratstate-1.pdf, id=103, 469.755pt x 289.08pt>
+<paper_files/figure-latex/poststratstate-1.pdf, id=104, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/poststratstate-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/poststratstate-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/poststratstate-1.pdf  used on
@@ -1078,106 +1078,89 @@ Package pdftex.def Info: paper_files/figure-latex/poststratstate-1.pdf  used on
 tex/poststratgender-1.pdf>] [10 <./paper_files/figure-latex/poststratrace-1.pdf
 > <./paper_files/figure-latex/poststratedu-1.pdf>] [11 <./paper_files/figure-la
 tex/poststratstate-1.pdf>] [12] [13]
-<paper_files/figure-latex/crossval-1.pdf, id=186, 469.755pt x 289.08pt>
+<paper_files/figure-latex/crossval-1.pdf, id=188, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/crossval-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/crossval-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/crossval-1.pdf  used on input
  line 419.
 (pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
-<paper_files/figure-latex/results-1.pdf, id=187, 469.755pt x 289.08pt>
+<paper_files/figure-latex/results-1.pdf, id=189, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/results-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/results-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/results-1.pdf  used on input 
 line 425.
 (pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 431.
-
-("D:\Programs\MikTeX 2.9\tex\latex\lm\t1lmtt.fd"
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [14 <./paper_files/figure-latex/crossval-1.pdf>] [15 <./paper_files/figure-la
-tex/results-1.pdf>] [16] [17]
-<paper_files/figure-latex/raceproportions-1.pdf, id=222, 578.16pt x 289.08pt>
+[14 <./paper_files/figure-latex/crossval-1.pdf>] [15 <./paper_files/figure-late
+x/results-1.pdf>]
+<paper_files/figure-latex/raceproportions-1.pdf, id=215, 469.755pt x 289.08pt>
 File: paper_files/figure-latex/raceproportions-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/raceproportions-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/raceproportions-1.pdf  used o
-n input line 582.
-(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-<paper_files/figure-latex/stateproportions-1.pdf, id=224, 578.16pt x 578.16pt>
+n input line 473.
+(pdftex.def)             Requested size: 469.75386pt x 289.07928pt.
+<paper_files/figure-latex/stateproportions-1.pdf, id=217, 578.16pt x 578.16pt>
 File: paper_files/figure-latex/stateproportions-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/stateproportions-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/stateproportions-1.pdf  used 
-on input line 590.
+on input line 481.
 (pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
-
-LaTeX Warning: Reference `fig:ageproportions' on page 18 undefined on input lin
-e 594.
-
-<paper_files/figure-latex/ageproportions-1.pdf, id=225, 578.16pt x 289.08pt>
+<paper_files/figure-latex/ageproportions-1.pdf, id=219, 578.16pt x 289.08pt>
 File: paper_files/figure-latex/ageproportions-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/ageproportions-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/ageproportions-1.pdf  used on
- input line 595.
+ input line 489.
 (pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-[18 <./paper_files/figure-latex/raceproportions-1.pdf>] [19 <./paper_files/figu
-re-latex/stateproportions-1.pdf>]
-<paper_files/figure-latex/genderproportions-1.pdf, id=249, 578.16pt x 289.08pt>
+<paper_files/figure-latex/genderprop-1.pdf, id=222, 578.16pt x 289.08pt>
+File: paper_files/figure-latex/genderprop-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/genderprop-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/genderprop-1.pdf  used on inp
+ut line 497.
+(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
+<paper_files/figure-latex/educationprop-1.pdf, id=223, 578.16pt x 289.08pt>
+File: paper_files/figure-latex/educationprop-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/educationprop-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/educationprop-1.pdf  used on 
+input line 503.
+(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
+<paper_files/figure-latex/resultspop-1.pdf, id=225, 578.16pt x 289.08pt>
+File: paper_files/figure-latex/resultspop-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/resultspop-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/resultspop-1.pdf  used on inp
+ut line 511.
+(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
 
-File: paper_files/figure-latex/genderproportions-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/genderproportions-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/genderproportions-1.pdf  used
- on input line 601.
-(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-<paper_files/figure-latex/educationproportions-1.pdf, id=250, 578.16pt x 289.08
-pt>
-File: paper_files/figure-latex/educationproportions-1.pdf Graphic file (type pd
-f)
-<use paper_files/figure-latex/educationproportions-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/educationproportions-1.pdf  u
-sed on input line 607.
-(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-<paper_files/figure-latex/unnamed-chunk-9-1.pdf, id=251, 469.755pt x 325.215pt>
+LaTeX Warning: Reference `fig:ageprop' on page 16 undefined on input line 518.
 
-File: paper_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/unnamed-chunk-9-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-9-1.pdf  used o
-n input line 613.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[20 <./paper_files/figure-latex/ageproportions-1.pdf> <./paper_files/figure-lat
-ex/genderproportions-1.pdf>] [21 <./paper_files/figure-latex/educationproportio
-ns-1.pdf> <./paper_files/figure-latex/unnamed-chunk-9-1.pdf>] [22] [23] [24]
-Overfull \hbox (0.13643pt too wide) in paragraph at lines 670--676
-[]$\T1/lmr/m/n/10 (+12) h t t p s : / / w w w . p o l i t i f a c t . c o m / f
- a c t c h e c k s / 2 0 1 4 / j a n / 0 9 / us -[] c e n s us -[] b u r e a u 
-/ a m e r i c a ns -[] m u st -[] a n s w er -[] us -[] c e n s us -[]
+[16 <./paper_files/figure-latex/raceproportions-1.pdf>] [17 <./paper_files/figu
+re-latex/stateproportions-1.pdf>] [18 <./paper_files/figure-latex/ageproportion
+s-1.pdf> <./paper_files/figure-latex/genderprop-1.pdf>] [19 <./paper_files/figu
+re-latex/educationprop-1.pdf> <./paper_files/figure-latex/resultspop-1.pdf>] [2
+0] [21] [22]
+Overfull \hbox (0.95897pt too wide) in paragraph at lines 576--578
+[][]\T1/lmr/m/n/10 (-20) DeSilver, Drew. 2020. ``The Politics of American Gener
+ations: How Age Affects Attitudes and Voting Behavior.''
  []
 
-
-Overfull \hbox (0.22801pt too wide) in paragraph at lines 683--684
-[][]$\T1/lmr/m/n/10 (+12) h t t p s : / / w w w . c n b c . c o m / 2 0 2 0 / 0
- 8 / 3 1 / t r u m p -[] s u g g e s ts -[] a c c u s e d -[] k e n o s h a -[]
- k i l l er -[] k y le -[] r i t t e n h o u s e -[] a c t e d -[] in -[] s e l
-f -[]
- []
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 706.
-[25]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 706.
+[23]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 630.
+[24]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 630.
 (paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 706.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 706.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 630.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 630.
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 706.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 630.
  ) 
 Here is how much of TeX's memory you used:
- 13813 strings out of 493305
- 199700 string characters out of 3141035
- 329234 words of memory out of 3000000
- 16955 multiletter control sequences out of 15000+200000
- 82145 words of font info for 125 fonts, out of 3000000 for 9000
+ 13804 strings out of 493305
+ 199441 string characters out of 3141035
+ 322320 words of memory out of 3000000
+ 16916 multiletter control sequences out of 15000+200000
+ 82866 words of font info for 132 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,6n,38p,2812b,460s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 40i,6n,38p,2812b,455s stack positions out of 5000i,500n,10000p,200000b,50000s
 {D:/Programs/MikTeX 2.9/fonts/enc/dvips/lm/lm-ec.enc}{D:/Programs/MikTeX 2.9/
 fonts/enc/dvips/lm/lm-rm.enc}{D:/Programs/MikTeX 2.9/fonts/enc/dvips/lm/lm-math
 sy.enc}{D:/Programs/MikTeX 2.9/fonts/enc/dvips/lm/lm-mathit.enc}{D:/Programs/Mi
@@ -1192,10 +1175,10 @@ rams/MikTeX 2.9/fonts/type1/public/lm/lmr7.pfb><D:/Programs/MikTeX 2.9/fonts/ty
 pe1/public/lm/lmr8.pfb><D:/Programs/MikTeX 2.9/fonts/type1/public/lm/lmr9.pfb><
 D:/Programs/MikTeX 2.9/fonts/type1/public/lm/lmri10.pfb><D:/Programs/MikTeX 2.9
 /fonts/type1/public/lm/lmsy10.pfb><D:/Programs/MikTeX 2.9/fonts/type1/public/lm
-/lmsy7.pfb><D:/Programs/MikTeX 2.9/fonts/type1/public/lm/lmtt10.pfb>
-Output written on paper.pdf (25 pages, 505481 bytes).
+/lmsy7.pfb>
+Output written on paper.pdf (24 pages, 484790 bytes).
 PDF statistics:
- 481 PDF objects out of 1000 (max. 8388607)
- 81 named destinations out of 1000 (max. 500000)
- 16619 words of extra memory for PDF output out of 17280 (max. 10000000)
+ 492 PDF objects out of 1000 (max. 8388607)
+ 100 named destinations out of 1000 (max. 500000)
+ 16603 words of extra memory for PDF output out of 17280 (max. 10000000)
 
