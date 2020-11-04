@@ -13,8 +13,7 @@
 library(haven)
 library(tidyverse)
 # Read in the raw data. 
-raw_data <- read_dta("inputs/data/usa_00001.dta"
-                     )
+raw_data <- read_dta("inputs/data/usa_00001.dta")
 # Add the labels
 raw_data <- labelled::to_factor(raw_data)
 
@@ -127,6 +126,8 @@ reduced_data <- droplevels(reduced_data)
 cleaned_data <- reduced_data %>% select(race_ethnicity, gender, education,
                                         state, age_group)
 
+write.csv(x=cleaned_post, file="inputs/cleaned_acs.csv")
+
 # Plot Race
 perc_race <- cleaned_data %>% count(race_ethnicity) %>% mutate(perc = n/nrow(cleaned_data))
 race <- perc_race %>% ggplot(aes(x = race_ethnicity, y = perc)) + geom_bar(stat = "identity") + 
@@ -148,8 +149,6 @@ education <- perc_education %>% ggplot(aes(x = education, y = perc)) + geom_bar(
                                                                                x = "Education", y = "Percentage", subtitle = "Figure X")
 summary(cleaned_data$education)
 education
-
-# Explain 88 Olds are shit
 
 
 # Plot state
