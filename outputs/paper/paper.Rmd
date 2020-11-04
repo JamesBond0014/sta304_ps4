@@ -22,7 +22,7 @@ library(tidyverse)
 library(knitr)
 ```
 ```{r loading, echo=FALSE}
-# Load required data and models
+# Load cleaned ACS data
 cleaned_data <- data.frame(read.csv(file = "../../inputs/cleaned_acs.csv"))
 ```
 
@@ -63,17 +63,22 @@ The full dataset for Wave 49 (@nationscape) consists of 6,532 responses for over
 
 Table 1: Respondent 2020 US presidential election vote distribution
 ```{r, echo=FALSE}
+# Instructions on how to access this data file are posted in the README in our Github repository
+# Load Nationscape dataset for Wave 49
 raw_data <- read_dta("../../inputs/data/ns20200625/ns20200625.dta")
 raw_data <- labelled::to_factor(raw_data)
-
+# Generate summary frequencies for variable vote_2020
 vote_2020 = table(raw_data$vote_2020)
+# Output a nice looking table
 kable(vote_2020, col.names = c("vote_2020", "Frequency"))
 ```
 - age: the age of the respondent in years at the time of the survey
 
 Table 2: Respondent age statistics
 ```{r, echo=FALSE}
+# Generate summary frequencies for variable age
 age = as.array(summary(raw_data$age))
+# Output a nice looking table
 kable(age, col.names = c("Statistics", "Values"))
 ```
 
@@ -81,7 +86,9 @@ kable(age, col.names = c("Statistics", "Values"))
 
 Table 3: Respondent gender distribution
 ```{r, echo=FALSE}
+# Generate summary frequencies for variable gender
 gender = table(raw_data$gender)
+# Output a nice looking table
 kable(gender, col.names = c("gender", "Frequency"))
 ```
 
@@ -89,7 +96,9 @@ kable(gender, col.names = c("gender", "Frequency"))
 
 Table 4: Respondent race distribution
 ```{r, echo=FALSE}
+# Generate summary frequencies for variable race_ethnicity
 race_ethnicity = table(raw_data$race_ethnicity)
+# Output a nice looking table
 kable(race_ethnicity, col.names = c("race_ethnicity", "Frequency"))
 ```
 
@@ -99,7 +108,9 @@ kable(race_ethnicity, col.names = c("race_ethnicity", "Frequency"))
 
 Table 5: Respondent education distribution
 ```{r, echo=FALSE}
+# Generate summary frequencies for variable education
 education = table(raw_data$education)
+# Output a nice looking table
 kable(education, col.names = c("education", "Frequency"))
 ```
 
@@ -108,6 +119,7 @@ For the variables age, gender, race_ethnicity, state, and education, we did not 
 When cleaning the data, we merged some of the factors of the variables to match the granularity of the data in the post-stratification dataset. This included splitting age responses into bins of size 10, reducing education to two bins ("High School or Less" and "Post Secondary or More"), and combining Asian Indian, Korean, Filipino, Vietnamese, and Pacific Islander ethnicities into "Asian (Other)" (Chinese and Japanese remained their own factors because this is the level of specificity available in the post-stratification dataset). Lastly, we took a subset of the dataset where respondents had decided to vote for either Trump or Biden in the 2020 US presidential election (for the purposes of being able to predict the popular vote using a binary model).
 
 ```{r, echo=FALSE}
+# Isolate variables of interest
 reduced_data <- 
   raw_data %>% 
   select(vote_2020,
@@ -116,14 +128,14 @@ reduced_data <-
          race_ethnicity,
          state,
          education)
-
+# Only keep rows that are not missing any values
 reduced_data <- reduced_data[complete.cases(reduced_data),]
 
 # Remove people under 18 and over 78 
 reduced_data <- reduced_data[reduced_data$age <= 78 &
                                reduced_data$age >= 18,]
 
-# Splitting age responses into groups of 10 years
+# Split age responses into groups of 10 years
 reduced_data$age_group <- cut(reduced_data$age, 
                               breaks = seq(10, 88, 10),
                               labels = c("18 to 28","29 to 38","39 to 48",
@@ -204,7 +216,7 @@ tibble_race$race <- factor(tibble_race$race,
                                                  "Asian (Chinese)", "Asian (Japanese)",
                                                  "Asian (Other)", "American Indian or Alaska Native", 
                                                  "Some other race"))
-# Distribution of sex as a bar graph in percentages
+# Distribution of race as a bar graph in percentages
 ggplot(tibble_race, aes(x = race, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   geom_text(
@@ -217,13 +229,13 @@ ggplot(tibble_race, aes(x = race, y = count/total_count)) +
 ```
 
 ```{r educationdist, fig.height=4, fig.cap="Distribution of the education of survey respondents in percentages.", message=FALSE, echo=FALSE}
-# Summary table with counts for race
+# Summary table with counts for education
 tibble_education <- data.frame(table(reduced_data$education)) %>%
   rename(
     education = Var1,
     count = Freq
   )
-# Distribution of sex as a bar graph in percentages
+# Distribution of education as a bar graph in percentages
 ggplot(tibble_education, aes(x = education, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   geom_text(aes(label = paste0(round(count/total_count*100), "%")),
@@ -234,13 +246,13 @@ ggplot(tibble_education, aes(x = education, y = count/total_count)) +
 ```
 
 ```{r statedist, fig.height=4, fig.cap="Distribution of the state of survey respondents in percentages.", message=FALSE, echo=FALSE}
-# Summary table with counts for race
+# Summary table with counts for state
 tibble_state <- data.frame(table(reduced_data$state)) %>%
   rename(
     state = Var1,
     count = Freq
   )
-# Distribution of sex as a bar graph in percentages
+# Distribution of state as a bar graph in percentages
 ggplot(tibble_state, aes(x = state, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 90, hjust=1)) +
@@ -249,13 +261,13 @@ ggplot(tibble_state, aes(x = state, y = count/total_count)) +
 ```
 
 ```{r votedist, fig.height=4, fig.cap="Distribution of the vote of survey respondents in percentages.", message=FALSE, echo=FALSE}
-# Summary table with counts for race
+# Summary table with counts for vote
 tibble_vote <- data.frame(table(reduced_data$vote_2020)) %>%
   rename(
     vote = Var1,
     count = Freq
   )
-# Distribution of sex as a bar graph in percentages
+# Distribution of vote as a bar graph in percentages
 ggplot(tibble_vote, aes(x = vote, y = count/total_count)) + 
   geom_bar(stat = "identity") +
   geom_text(aes(label = paste0(round(count/total_count*100), "%")),
@@ -283,12 +295,14 @@ Every month, a systemic sample is created for each US county or equivalent, wher
 ### Data features and visualization 
 The ACS Questionnaire asks questions regarding every inhabitant in the residence it is sent to. However, the most information is required of “Person 1”, the person whose name the residence is owned in, being bought in, or rented in (or any adult, if none of those labels apply). The ACS questionnaire is extremely like that of the US Census Questionnaire, given that it’s meant to be a substitution for it. It was developed after the Census Bureau was provided with various subjects that other federal agencies justified as important, categorizing each subject as “mandatory”, “required”, or “programmatic”, from which the ACS collected data for both the “mandatory” and “required” subjects. This approach illustrates itself in the questionnaire, as every question is answered by an objective fact, whether it’s a checkbox, a number, or a short answer (such as the person’s major). (@acs_questionnaire) This allows little ambiguity in how the question must be answered, and makes each response fairly easy, which is a major strength of the questionnaire. However, depending on the number of people in the residence, the survey can be on the longer side (up to 11 pages). Combined with the fact that it is legally mandated that the response is filled out, with a potential fine of up to $5000, respondents may feel the need to rush through or give a fake response to questions they may not know immediately (such as when the residence was built). (@politifact)  In addition, in the case that there is not one single person responsible for the residence, like in the case where multiple people are renting a room from one landlord who doesn’t live at the residence, then the data of those who are not “Person 1” is not collected, despite the fact that they are on the same standing in the eyes of the survey. However, no one has been prosecuted for not filling out the survey since 1970 and the case outlined in the second point is relatively rare in the total population, so these weaknesses are fairly minor in the grand scheme of things. 
 
-As mentioned above, the variables we used were age (the age of the respondent), gender (what gender they identified as), race/ethnicity of the respondent, state (the state they lived in), and education (what their highest level of education was). We did not find any variables that were similar enough to the ones chosen. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.  TODO
+As mentioned above, the variables we used were age (the age of the respondent), gender (what gender they identified as), race/ethnicity of the respondent, state (the state they lived in), and education (what their highest level of education was). We did not find any variables that were similar enough to the ones chosen. However, as the post-stratification data was a different dataset to that of the survey data, we had to transform the post-stratification data to match that, including general cleaning in the sense of converting non-numeric values to numeric, matching spelling/capitalization of certain responses, and constructing an age_groups variable from the ages given. For more information, please see 01-data_cleaning-post-strat.R in the scripts folder of the github repository.
 
 ```{r poststratage, fig.height=4, fig.cap="Distribution of the age of ACS respondents in percentages", echo=FALSE}
+# Convert data to a factor
 cleaned_data <- labelled::to_factor(cleaned_data)
-# Plot age_group
+# Calculate percentages for each age group
 perc_age_group <- cleaned_data %>% count(age_group) %>% mutate(perc = n/nrow(cleaned_data))
+# Plot distribution of age as a bar graph in percentages
 ggplot(perc_age_group, aes(x = age_group, y = perc)) + 
   geom_bar(stat = "identity") + 
   geom_text(aes(label = paste0(round(perc*100), "%")), 
@@ -298,8 +312,9 @@ ggplot(perc_age_group, aes(x = age_group, y = perc)) +
 ```
 
 ```{r poststratgender, fig.height=4, fig.cap="Distribution of the gender of ACS respondents in percentages", echo=FALSE}
-# Plot Gender
+# Calculate percentages for each gender
 perc_gender <- cleaned_data %>% count(gender) %>% mutate(perc = n/nrow(cleaned_data))
+# Plot distribution of age as a bar graph in percentages
 ggplot(perc_gender, aes(x = gender, y = perc)) + 
   geom_bar(stat = "identity") + 
   geom_text(aes(label = paste0(round(perc*100), "%")), 
@@ -309,8 +324,9 @@ ggplot(perc_gender, aes(x = gender, y = perc)) +
 ```
 
 ```{r poststratrace, fig.height=4, fig.cap="Distribution of the race of ACS respondents in percentages", echo=FALSE}
-# Plot race
+# Calculate percentages for each race
 perc_race <- cleaned_data %>% count(race_ethnicity) %>% mutate(perc = n/nrow(cleaned_data))
+# Plot distribution of race as a bar graph in percentages
 perc_race$race_ethnicity <- factor(perc_race$race_ethnicity, 
                                       levels = c("White", "Black, or African American", 
                                                  "Asian (Chinese)", "Asian (Japanese)",
@@ -327,7 +343,9 @@ ggplot(perc_race, aes(x = race_ethnicity, y = perc)) +
 ```
 
 ```{r poststratedu, fig.height=4, fig.cap="Distribution of the education of ACS respondents in percentages", echo=FALSE}
+# Calculate percentages for each education group
 perc_education <- cleaned_data %>% count(education) %>% mutate(perc = n/nrow(cleaned_data))
+# Plot distribution of education as a bar graph in percentages
 ggplot(perc_education, aes(x = education, y = perc)) +
   geom_bar(stat = "identity") + 
   geom_text(aes(label = paste0(round(perc*100), "%")), 
@@ -338,10 +356,10 @@ ggplot(perc_education, aes(x = education, y = perc)) +
 ```
 
 ```{r poststratstate, fig.height=4, fig.cap="Distribution of the state of ACS respondents in percentages", echo=FALSE}
-# Plot state
+# Calculate percentages for each state
 perc_state <- cleaned_data %>% count(state) %>% mutate(perc = n/nrow(cleaned_data))
 perc_state <- labelled::to_factor(perc_state)
-
+# Plot distribution of education as a bar graph in percentages
 ggplot(perc_state, aes(x = state, y = perc)) + 
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, hjust=1)) +
@@ -391,25 +409,36 @@ In this case, using MRP makes sense as we have voting information provided by Na
 We will go over our cross validation results, the explanatory variables that have the largest impact on the response variable, and post-stratification predictions.
 
 ```{r crossval, fig.height=4, fig.cap="Cross-validation results", echo=FALSE}
+# Load model
 model_education <- readRDS("../../model/4chains_3000iter_.rds")
+# Load cleaned processed data (generated by script build-model.R)
 reduced_data <- readRDS("../../inputs/training_data.Rda")
 total_rows <- nrow(reduced_data)
-# get updated columns (used for the model)
-reduced_data <- reduced_data %>% select(vote_biden,age_group, education, gender,
+# Get select columns of interest
+reduced_data <- reduced_data %>% select(vote_biden, age_group, education, gender,
                                         race_ethnicity, state)
+# Set seed for reproducibility (same seed as in build-model.R)
 set.seed(50)
-#set
+# Complete cross-validation by reproducing testing set
+# Shuffle indices in the same way as build-model.R
 shuffle_indices <- sample(total_rows)
 data <- reduced_data[shuffle_indices,]
+# Calculate index to serve as boundary for 95 - 5 data split
 boundary <- as.integer(total_rows*0.95)
+
+# Separate training and testing datasets using calculated boundary
 training <- data[0:boundary,]
 testing <- data[boundary:total_rows,]
-#testing the accuracy of the model
+# Test the accuracy of the model
+# Calculate probability of voting Biden on the testing data
 probability <- predict(model_education, type = "response", newdata = testing)
+# Determine vote based on probability (respondent would vote for Biden if probability > 0.5)
 probability <- if_else(probability[,1] >0.5,1,0)
 testing$probs <- probability
+# Compare to ground truth 2020 vote
 testing <- testing %>% mutate(acc = probs==vote_biden)
 
+# Graph cross-validation results, TRUE being a correct prediction
 data.frame(table(testing$acc)) %>% 
   ggplot(aes(x = Var1, y = Freq/(sum(Freq)))) +
   geom_bar(stat="identity") +
@@ -422,10 +451,12 @@ data.frame(table(testing$acc)) %>%
 
 
 ```{r results, fig.height=4, fig.cap="Prediction distribution after cross validation", echo=FALSE}
+# Determine if prediction is true, false positive, or false negative
 wrong <- as.numeric(testing$vote_biden) - as.numeric(testing$probs) - 1
 wrong <- plyr::mapvalues(wrong, c(-1,0,1), c("False Positive", 
                                                    "Correct",
                                                    "False Negative"))
+# Graph more specific cross-validation results
 data.frame(table(wrong)) %>% 
   ggplot(aes(x = wrong, y = Freq/sum(Freq)))+
   geom_bar(stat="identity") +
@@ -438,13 +469,22 @@ data.frame(table(wrong)) %>%
 
 Overall, our model performs non-trivially with a cross-validation accuracy of approximately 63% (Figure \@ref(fig:crossval)). This is significantly better than a random guess (which would have an accuracy of 50%). Furthermore, by investigating the source of our inaccuracies (Figure \@ref(fig:results)), we see that of the approximately 21% of our predictions were false negatives (Predicted Trump vote when it should predict Biden) and 15% of our predictions were false positives (predicted Biden when it should have predicted Trump vote). This was significantly better than some of the other models we tried as discussed in the previously, as we had a large number of false negatives in many models when education was split into multiple groups rather than just College or no College.  
 
+```{r}
+# Find coefficient estimates and intervals for 95% confidence level
+coefficients_text <- summary(model_education)
+```
 
 ```{r, echo=FALSE}
+# Hand input summary coefficients
 coefficient <- matrix(c(1.40, 0.44, 0.53, 2.26, 1.39, 0.71, 0.07, 2.89, 0.75, 0.34, 0.08, 1.42, 2.38, 0.32, 1.75, 3.01, 
                         0.92, 0.32, 0.31, 1.54, 0.13, 0.29, -0.42, 0.70, -0.44, 0.06, -0.57, -0.32, -0.27, 0.21, -0.68, 0.13, -0.77, 0.20,-1.17,-0.38, -1.02,0.20,-1.42,-0.64,-0.94,0.21,-1.35,-0.55, -0.83,0.20,-1.25,-0.45, -0.74,0.22,-1.19,-0.32, 0.36,0.07,0.22,0.51), ncol=4, byrow=TRUE)
+# Table column names
 colnames(coefficient) <- c("Estimate", "Estimate Error", "l-95% CI", "u-95% CI")
+# Table row names
 rownames(coefficient) <- c("race_AsianChinese", "race_AsianJapanese", "race_AsianOther", "race_AfricanAmerican", "race_Someotherrace", "race_ethnicityWhite", "genderMale", "age_group29to38", "age_group39to48", "age_group49to58", "age_group59to68", "age_group69to78", "age_group79andabove", "education_PostSecondaryDegree")
+# Form table
 coefficient <- as.table(coefficient)
+# Output beautiful table
 kable(coefficient)
 ```
 Table 6: Coefficients estimates and coefficient intervals given a confidence level of 95%
@@ -452,10 +492,15 @@ Table 6: Coefficients estimates and coefficient intervals given a confidence lev
 We consider the strength of our variables by looking at the coefficient estimates and how large the interval of the estimate is at a 95% confidence level (we calculate this by subtracting "u-95% CI" which stands for upper 95% confidence interval and "l-95% CI" which stands for lower 95% confidence interval). The output for the states are omitted in the interest of space (and because we noticed that the interval of their estimate is very large at a 95% confidence level is very large with absolute value of ~4 for each state, indicating that the estimate for each state is uncertain and thus state is not a strong predictor of voting). Although all variables listed in Table 6 have a smaller interval that state, a few variables stand out has having especially small confidence intervals. They are gender (interval of only 0.25) and education (interval of only 0.29). This indicates that the model is fairly certain in its estimate of the coefficients for gender and education. Therefore, these two variables likely have the strongest influence on the response variable because there is variability in the possible value of their coefficients at a confidence level of 0.95. Furthermore, the low error of these two variables reemphasizes our conclusion that age and education are the strongest determiners of 2020 voting. The other variables are stronger predictors than state but not as strong as age and education.
 
 ```{r, echo=FALSE}
+# Load saved data and model
+# Saved by running mrp.R
 cell_counts <- readRDS("../../inputs/cell_counts.RDS")
+# Saved by running build-model.R
 training_data <- readRDS("../../inputs/training_data.RDA")
+# Saved by running build-model.R
 model <- readRDS("../../model/4chains_3000iter_.rds")
 
+# Saved by running mrp.R
 race_res <- readRDS("../../processed_data/race_res.RDS")
 gender_res <- readRDS("../../processed_data/gender_res.RDS")
 state_res <- readRDS("../../processed_data/state_res.RDS")
@@ -467,8 +512,9 @@ education_res <- readRDS("../../processed_data/education_res.RDS")
 The post-stratification data of the 2018 ACS data showed that most of the variables had very little biases since the MRP estimates were very close to the original 2018 ACS data. In Figure \@ref(fig:raceproportions) shown below, we see that our raw data proportions was very close to the estimate proportions. Furthermore, this figure forecasts that almost 90% Black, or African American voters will vote for Joe Biden, 75% to 80% of Chinese and Japanese voters are predicted to vote for Biden, while approximately only 45% of white and American Indian or Alaska Native voters are projected to Vote for Joe Biden instead of Donald Trump. Overall, ethnic minorities are projected to vote for Biden over Trump.
 
 ```{r raceproportions, fig.height=4, fig.cap="Proportion of forecasted votes for Biden by race", message=FALSE, echo=FALSE}
-# following graphs are inspired by Monica Alexander 
+# Following graphs are inspired by Monica Alexander 
 # https://github.com/MJAlexander/marriage-name-change/blob/master/mncs_mrp.R
+# Plot predicted votes by race
 race_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(race_ethnicity), 
              color = "MRP estimate")) + 
@@ -491,7 +537,7 @@ race_res %>%
 In Figure \@ref(fig:stateproportions) show below, we show the projected voting proportions by each state. We see that most of the states are near the 50% mark, with states such as Arizona and Nevada having only around 30% votes for Biden where as Vermont is predicted to have almost 90% of its voters vote for Biden. 
 
 ```{r stateproportions, fig.height=8,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by state", message=FALSE, echo=FALSE}
-
+# Plot predicted votes by state
 state_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(state), color = "MRP estimate")) + 
   geom_point() +
@@ -513,7 +559,7 @@ state_res %>%
 Similarly for age (Figure \@ref(fig:ageproportions)), there showed a general trend that the older population are less likely to vote for Trump compared to Biden, with 18-28 years old population projected to vote for Biden almost 70% of the time and just over 45% of the 19 to 58 age group predicted to vote for Biden.
 
 ```{r ageproportions, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by age group.", message=FALSE, echo=FALSE}
-
+# Plot predicted votes by age
 age_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(age_group), color = "MRP estimate")) + 
   geom_point() +
@@ -536,6 +582,7 @@ Finally in Figures \@ref(fig:genderprop) and \@ref(fig:ageproportions) below, we
 
 
 ```{r genderprop, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by gender.", message=FALSE, echo=FALSE}
+# Plot predicted votes by gender
 gender_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(gender), color = "MRP estimate")) + 
   geom_point() +
@@ -556,8 +603,7 @@ gender_res %>%
 
 
 ```{r educationprop, fig.height=4,fig.width=8, fig.cap="Proportion of forecasted votes for Biden by education.", message=FALSE, echo=FALSE}
-# education_res$age_group <- as.factor(education_res$age_group)
-
+# Plot predicted votes by education
 education_res %>% 
   ggplot(aes(y = mean, x = forcats::fct_inorder(education), color = "MRP estimate")) + 
   geom_point() +
@@ -577,14 +623,15 @@ education_res %>%
 For the US 2020 election between Biden and Trump, we forecast Biden to win the popular vote by 54% to 46% of the votes \@ref(fig:resultspop). 
 
 ```{r resultspop, fig.height=4,fig.width=8, fig.cap="Forecasted popular vote results.", message=FALSE, echo=FALSE}
-
+# Generated by predict.R
 overall_prop <- readRDS('../../processed_data/predictions.RDS')
+# Calculate prediction
 biden <-sum(overall_prop$vote_weight)
 trump <- 1 - biden
-
+# Generate vectors to represent data
 Candidates <- c("Biden", "Trump")
 Percentage <- c(biden, trump)
-
+# Plot overall predicted votes
 data.frame(Candidates, Percentage) %>% 
   ggplot(aes(x = Candidates, 
              y= Percentage)) +
